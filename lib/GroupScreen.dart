@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ffootvlg/SingleGroupScreen.dart';
 import 'package:ffootvlg/models/Group.dart';
 import 'package:ffootvlg/models/createGroup.dart';
 import 'package:ffootvlg/models/joinGroup.dart';
@@ -39,7 +40,7 @@ Future<String> JoinOneGroup(JoinGroup joinGroup) async {
 }
 
 
-Future<String> RetrieveGroup(Member user) async {
+Future<List<Group>> RetrieveGroup(Member user) async {
   final http.Response response = await http.post(
     'https://foot.agenda-crna-n.com/getGroups.php',
     headers: <String, String>{
@@ -48,8 +49,9 @@ Future<String> RetrieveGroup(Member user) async {
     body: json.encode(user),
   );
   if (response.statusCode == 200) {
-    print(response.body);
-    return response.body;
+    List jsonResponse = json.decode(response.body);
+    return jsonResponse.map((group) => Group.fromJson(group)).toList();
+
   } else {
     throw Exception('Impossible de récupérer les groupes');
   }
@@ -87,7 +89,7 @@ class _GroupPageState extends State<GroupPage> {
   final _createFormkey = GlobalKey<FormState>();
   final _joinFormKey = GlobalKey<FormState>();
 
-  final groups = <Group>[];
+  List<Group> groups = <Group>[];
 
   final GroupNameController = TextEditingController();
   final JoinCodeController = TextEditingController();
@@ -155,13 +157,6 @@ class _GroupPageState extends State<GroupPage> {
     super.dispose();
   }
 
-  void retgroup(){
-    Group gro;
-    RetrieveGroup(widget.user).then((value) => {
-      gro = Group.fromJson(value);
-      print(gro)
-    }).catchError((onError) => print(onError));
-  }
 
   Widget _buildJoinBtn(){
     return FlatButton(
@@ -267,14 +262,45 @@ class _GroupPageState extends State<GroupPage> {
         )
     );
   }
-  Widget ListGroup() {
+  Widget ListGroup(data) {
+    return ListView.builder(
+        padding: EdgeInsets.all(16.0),
+        itemCount: data.length,
+        itemBuilder: (BuildContext context, int index) {
+
+          return _tile(data[index]);
+        }
+    );
+  }
+  Widget _tile(group){
+    return ListTile(
+      title: Text(group.groupName),
+      onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => SingleGroupScreen(group:group))),
+    );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    retgroup();
+  Widget _futurebuilder(){
+    return FutureBuilder<List<Group>>(
+      future: RetrieveGroup(widget.user),
+      builder: (context,snapshot){
+        if(snapshot.hasData){
+          List<Group> data = snapshot.data;
+          return ListGroup(data);
+        }else if(snapshot.hasError){
+          return Text("${snapshot.error}");
+        }
+        return Container(
+          child: Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
+              strokeWidth: 10,
+            ),
+          )
+        );
+      },
+    );
   }
+
 
 
   @override
@@ -283,6 +309,9 @@ class _GroupPageState extends State<GroupPage> {
       children: <Widget>[
         CreateForm(),
         JoinForm(),
+        Expanded(
+          child: _futurebuilder(),
+        )
       ],
     );
   }
