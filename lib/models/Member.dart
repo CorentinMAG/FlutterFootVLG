@@ -7,7 +7,7 @@ class Member{
   final String phone_number;
   final String email;
   final String birthday;
-  final String password;
+  String password;
   final String inscription_date;
   final bool is_admin;
   final bool is_superuser;

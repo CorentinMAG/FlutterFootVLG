@@ -140,7 +140,7 @@ class _LoginFormState extends State<LoginForm> {
   }
   ValidationForm(){
     RetrieveUser(EmailController.text, PasswordController.text).then((user) =>{
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen(user))) // on peut naviguer à la route suivante
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen(user:user))) // on peut naviguer à la route suivante
     }).catchError((onError) =>{
       Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text(onError.toString())))
