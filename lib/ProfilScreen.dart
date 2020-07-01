@@ -22,10 +22,6 @@ Future<String> UpdateUser(Member user) async {
 }
 
 class ProfilScreen extends StatelessWidget {
-  Member user;
-
-  ProfilScreen({@required this.user});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +29,7 @@ class ProfilScreen extends StatelessWidget {
         body: Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 43.0),
-            child: UpdateForm(user:user),
+            child: UpdateForm(user:StateContainer.of(context).user),
           ),
         )
     );
@@ -42,7 +38,8 @@ class ProfilScreen extends StatelessWidget {
 
 
 class UpdateForm extends StatefulWidget {
-  Member user;
+
+  final Member user;
   UpdateForm({@required this.user});
 
   @override
@@ -273,7 +270,7 @@ class _UpdateFormState extends State<UpdateForm> {
         elevation: 5.0,
         onPressed: (){
           if(_updateFormKey.currentState.validate()){
-            ValidationForm(widget.user);
+            ValidationForm(StateContainer.of(context).user);
           }
         },
         padding: EdgeInsets.all(15.0),
@@ -360,6 +357,7 @@ class _UpdateFormState extends State<UpdateForm> {
         updateUser.password = user.password;
       }
       UpdateUser(updateUser).then((value) => {
+      StateContainer.of(context).updateUserInfo(Member: updateUser),
         Scaffold.of(context).showSnackBar(SnackBar(content: Text(value.toString()))),
       }).catchError((onError)=>{
         Scaffold.of(context)

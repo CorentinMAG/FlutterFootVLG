@@ -1,16 +1,18 @@
 import 'dart:core';
 
+import 'package:flutter/cupertino.dart';
+
 class Member{
   final int id;
-  final String last_name;
-  final String first_name;
-  final String phone_number;
-  final String email;
-  final String birthday;
+  String last_name;
+  String first_name;
+  String phone_number;
+  String email;
+  String birthday;
   String password;
   final String inscription_date;
-  final bool is_admin;
-  final bool is_superuser;
+  bool is_admin;
+  bool is_superuser;
 
   Member({
     this.id=0,
@@ -53,5 +55,61 @@ class Member{
       is_admin: json['is_admin'],
       is_superuser: json['is_superuser']
     );
+  }
+}
+
+class _InheritedStateContainer extends InheritedWidget{
+  final StateContainerState data;
+
+  _InheritedStateContainer({
+    Key key,
+    @required this.data,
+    @required Widget child,
+}):super(key:key,child:child);
+
+  @override
+  bool updateShouldNotify(_InheritedStateContainer oldWidget) =>true;
+}
+
+class StateContainer extends StatefulWidget{
+  final Widget child;
+  final Member user;
+
+  StateContainer({
+    @required this.child,
+    this.user
+});
+
+  static StateContainerState of(BuildContext context){
+    return (context.inheritFromWidgetOfExactType(_InheritedStateContainer) as _InheritedStateContainer).data;
+  }
+
+  @override
+  StateContainerState createState() => new StateContainerState();
+}
+
+class StateContainerState extends State<StateContainer>{
+  Member user;
+
+  void updateUserInfo({Member Member}){
+    if(user ==null){
+      setState(() {
+        user = Member;
+      });
+    }else{
+      setState(() {
+        user = Member;
+      });
+    }
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new _InheritedStateContainer(
+      data:this,
+      child: widget.child,
+    );
+
   }
 }

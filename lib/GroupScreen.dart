@@ -59,15 +59,11 @@ Future<List<Group>> RetrieveGroup(Member user) async {
 
 class GroupScreen extends StatelessWidget {
 
-  final Member user;
-
-  GroupScreen({@required this.user});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue,
-      body: GroupPage(user:user),
+      body: GroupPage(),
     );
   }
 }
@@ -75,9 +71,9 @@ class GroupScreen extends StatelessWidget {
 
 class GroupPage extends StatefulWidget {
 
-  final Member user;
-
-  GroupPage({@required this.user});
+  List<Group> groups = List<Group>();
+  List<Group> templist =List<Group>();
+  bool isLoading =false;
 
 
   @override
@@ -135,8 +131,9 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   validateData(){
+
     final createGroup = CreateGroup(
-      creator: widget.user,
+      creator: StateContainer.of(context).user,
       groupName: GroupNameController.text
     );
     GroupNameController.clear();
@@ -201,7 +198,7 @@ class _GroupPageState extends State<GroupPage> {
 
   validateJoinForm(){
     final joinGroup = JoinGroup(
-      user: widget.user,
+      user: StateContainer.of(context).user,
       code: JoinCodeController.text
     );
     JoinCodeController.clear();
@@ -241,47 +238,68 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget CreateForm(){
-    return Form(
-        key: _createFormkey,
-        child:Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Expanded(
-              child:Card(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child:_buildCreateGroup() ,
-                    ),
-                    _buildCreateBtn()
-                  ],
+    if(StateContainer.of(context).user.is_admin){
+      return Form(
+          key: _createFormkey,
+          child:Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child:Card(
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child:_buildCreateGroup() ,
+                      ),
+                      _buildCreateBtn()
+                    ],
+                  ),
                 ),
-              ),
-            ) //_joinJroup(),// _listGroup()
-          ],
-        )
-    );
+              ) //_joinJroup(),// _listGroup()
+            ],
+          )
+      );
+    }else{
+      return Container();
+    }
+
   }
   Widget ListGroup(data) {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: data.length,
-        itemBuilder: (BuildContext context, int index) {
+    return Container(
+      child:ListView.builder(
+          padding: EdgeInsets.all(16.0),
+          itemCount: data.length,
+          itemBuilder: (BuildContext context, int index) {
 
-          return _tile(data[index]);
-        }
+            return _tile(data[index]);
+          }
+      ) ,
     );
+
   }
   Widget _tile(group){
-    return ListTile(
-      title: Text(group.groupName),
-      onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => SingleGroupScreen(group:group))),
+    return Column(
+      children: <Widget>[
+          ListTile(
+              title: RichText(
+                text: TextSpan(
+                    text: group.groupName,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                ),
+              ),
+            onTap: ()=>{
+                FocusScope.of(context).requestFocus(new FocusNode()),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SingleGroupScreen(group:group)))
+            },
+          ),
+        Divider(),
+      ],
     );
   }
 
   Widget _futurebuilder(){
     return FutureBuilder<List<Group>>(
-      future: RetrieveGroup(widget.user),
+      future: RetrieveGroup(StateContainer.of(context).user),
       builder: (context,snapshot){
         if(snapshot.hasData){
           List<Group> data = snapshot.data;
@@ -292,7 +310,7 @@ class _GroupPageState extends State<GroupPage> {
         return Container(
           child: Center(
             child: CircularProgressIndicator(
-              backgroundColor: Colors.black,
+              backgroundColor: Colors.lightBlueAccent,
               strokeWidth: 10,
             ),
           )

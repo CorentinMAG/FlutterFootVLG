@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
       body:  Row(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(40)
+            padding: EdgeInsets.all(20)
           ),
           Expanded(
             child:Column(
@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
           Padding(
-              padding: EdgeInsets.all(40)
+              padding: EdgeInsets.all(20)
           ),
         ],
         ) ,
@@ -78,7 +78,7 @@ class _LoginFormState extends State<LoginForm> {
         border: InputBorder.none,
         labelText: 'Entrer votre email',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
         prefixIcon: Icon(
           Icons.email,
@@ -117,7 +117,7 @@ class _LoginFormState extends State<LoginForm> {
           border: InputBorder.none,
           labelText: 'Entrer votre mot de passe',
           labelStyle: TextStyle(
-            color: Colors.black
+            color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.lock,
@@ -139,8 +139,10 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
   ValidationForm(){
+    final container = StateContainer.of(context);
     RetrieveUser(EmailController.text, PasswordController.text).then((user) =>{
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen(user:user))) // on peut naviguer à la route suivante
+      container.updateUserInfo(Member: user),
+      Navigator.pushReplacementNamed(context, '/home') // on peut naviguer à la route suivante
     }).catchError((onError) =>{
       Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text(onError.toString())))

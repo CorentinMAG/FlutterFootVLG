@@ -6,20 +6,15 @@ import 'GroupScreen.dart';
 import 'models/Member.dart';
 
 class HomeScreen extends StatelessWidget {
-  Member user;
-  HomeScreen({@required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: BottomBar(user:user),
+      child: BottomBar(),
     );
   }
 }
 class BottomBar extends StatefulWidget {
-  Member user;
-  BottomBar({@required this.user});
-
   @override
   _BottomBarState createState() => _BottomBarState();
 }
@@ -38,8 +33,8 @@ class _BottomBarState extends State<BottomBar> {
   @override
   void initState() {
     _widgetOptions = [
-      GroupScreen(user:widget.user),
-      ProfilScreen(user:widget.user)
+      GroupScreen(),
+      ProfilScreen()
     ];
 
   }

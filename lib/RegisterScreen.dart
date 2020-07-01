@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:ffootvlg/HomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -68,7 +67,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Nom',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.account_circle,
@@ -97,7 +96,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Prénom',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.account_circle,
@@ -125,7 +124,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Email',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.email,
@@ -154,7 +153,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Numéro de téléphone',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.phone_android,
@@ -186,7 +185,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Date de naissance (AAAA-mm-jj)',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.cake,
@@ -212,7 +211,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Mot de passe',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.lock,
@@ -238,7 +237,7 @@ class _RegisterFormState extends State<RegisterForm> {
           border: InputBorder.none,
           labelText: 'Confirmer votre mot de passe',
           labelStyle: TextStyle(
-              color: Colors.black
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.lock,
@@ -344,8 +343,10 @@ class _RegisterFormState extends State<RegisterForm> {
       birthday: BirthdayController.text,
       password: PasswordController.text
     );
+    final container = StateContainer.of(context);
     CreateUser(user).then((user) =>{
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(user:user)))
+      container.updateUserInfo(Member: user),
+      Navigator.pushReplacementNamed(context, '/home')
     })
         .catchError((onError) => {
       Scaffold.of(context)
