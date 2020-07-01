@@ -9,8 +9,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BottomBar(),
+    return Scaffold(
+      body:Container(
+        child: BottomBar(),
+      ) ,
     );
   }
 }
@@ -42,10 +44,7 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('FootVLG'),
-      ),
-      body: Center(
+      body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(

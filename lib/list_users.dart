@@ -27,13 +27,15 @@ class ListUsers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue,
       appBar: AppBar(
+        title: Text('Liste utilisateurs'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed:() => Navigator.pop(context),
         ),
       ),
-      body: Center(
+      body: Container(
         child: UsersList(),
       ),
     );
@@ -50,7 +52,9 @@ class _UsersListState extends State<UsersList> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        _futurebuilder()
+        Expanded(
+          child: _futurebuilder(),
+        )
       ],
     );
   }
@@ -59,6 +63,7 @@ class _UsersListState extends State<UsersList> {
     return Container(
       child: ListView.builder(
         padding: EdgeInsets.all(16.0),
+        itemCount: users.length,
         itemBuilder: (context,index){
           return _buildRow(users[index]);
         },
@@ -67,15 +72,26 @@ class _UsersListState extends State<UsersList> {
   }
 
   Widget _buildRow(user){
+    bool _value = user.is_admin;
     return Column(
       children: <Widget>[
         ListTile(
           title: RichText(
             text: TextSpan(
-              text: user.last_name,
+              text: "${user.last_name} ${user.first_name}",
               style: TextStyle(color: Colors.white,fontSize: 20),
             ),
           ),
+          trailing: Switch(
+            value: _value,
+            onChanged: (value){
+              setState(() {
+                _value=value;
+              });
+            },
+            activeTrackColor: Colors.lightGreenAccent,
+            activeColor: Colors.green,
+          )
         ),
         Divider(),
       ],

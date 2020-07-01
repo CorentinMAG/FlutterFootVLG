@@ -24,7 +24,17 @@ Future<String> UpdateUser(Member user) async {
 class ProfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var is_admin = StateContainer.of(context).user.is_admin;
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Profil'),
+        actions: <Widget>[
+          if(is_admin) IconButton(
+            icon: Icon(Icons.group),
+            onPressed:() => Navigator.pushNamed(context, '/listUser'),
+          )
+        ],
+      ),
       backgroundColor: Colors.blue,
         body: Center(
           child: Container(

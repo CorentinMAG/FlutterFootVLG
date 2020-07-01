@@ -62,6 +62,9 @@ class GroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('FootVLG'),
+      ),
       backgroundColor: Colors.blue,
       body: GroupPage(),
     );
