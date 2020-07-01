@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'models/updateMember.dart';
+
 Future<List<Member>> RetrieveUsers(Member user) async {
   final http.Response response = await http.post(
     'https://foot.agenda-crna-n.com/getAllUsers.php',
@@ -18,6 +20,21 @@ Future<List<Member>> RetrieveUsers(Member user) async {
 
   } else {
     throw Exception('Impossible de récupérer les utilisateurs');
+  }
+}
+
+Future<String> UpdateUserAdmin(UpdateMember updateMember) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/changeUserAdmin.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: json.encode(updateMember.toJson()),
+  );
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Impossible de changer les droits de l\'utilisateur');
   }
 }
 
@@ -65,36 +82,9 @@ class _UsersListState extends State<UsersList> {
         padding: EdgeInsets.all(16.0),
         itemCount: users.length,
         itemBuilder: (context,index){
-          return _buildRow(users[index]);
+          return ListViewItem(user:users[index]);
         },
       ),
-    );
-  }
-
-  Widget _buildRow(user){
-    bool _value = user.is_admin;
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: RichText(
-            text: TextSpan(
-              text: "${user.last_name} ${user.first_name}",
-              style: TextStyle(color: Colors.white,fontSize: 20),
-            ),
-          ),
-          trailing: Switch(
-            value: _value,
-            onChanged: (value){
-              setState(() {
-                _value=value;
-              });
-            },
-            activeTrackColor: Colors.lightGreenAccent,
-            activeColor: Colors.green,
-          )
-        ),
-        Divider(),
-      ],
     );
   }
 
@@ -120,5 +110,67 @@ class _UsersListState extends State<UsersList> {
     );
   }
 }
+class ListViewItem extends StatefulWidget {
+
+  Member user;
+  ListViewItem({@required this.user});
+
+  @override
+  _ListViewItemState createState() => _ListViewItemState(user:user);
+}
+
+class _ListViewItemState extends State<ListViewItem> {
+
+  Member user;
+  _ListViewItemState({@required this.user});
+  bool _value;
+  @override
+  void initState() {
+    _value = user.is_admin;
+    super.initState();
+  }
+
+  _updateField(Member user,Member admin){
+    final updateMember = UpdateMember(admin:admin,user:user);
+    UpdateUserAdmin(updateMember).then((value) => {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text(value.toString())))
+    }).catchError((onError)=>{
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text(onError.toString())))
+    });
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Column(
+      children: <Widget>[
+        ListTile(
+            title: RichText(
+              text: TextSpan(
+                text: "${user.last_name} ${user.first_name}",
+                style: TextStyle(color: Colors.white,fontSize: 20),
+              ),
+            ),
+            trailing: Switch(
+              value: _value,
+              onChanged: (value){
+                setState(() {
+                  _value=value;
+                  user.is_admin=_value;
+                  _updateField(user,StateContainer.of(context).user);
+                });
+              },
+              activeTrackColor: Colors.lightGreenAccent,
+              activeColor: Colors.green,
+            )
+        ),
+        Divider(),
+      ],
+    );
+  }
+}
+
 
 
