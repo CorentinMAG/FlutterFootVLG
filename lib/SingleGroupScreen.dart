@@ -39,7 +39,7 @@ class SingleGroupScreen extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             InfoScreen(group: group),
-            EvenementScreen(),
+            EvenementScreen(group:group),
             MemberScreen(group: group),
           ],
         ),
