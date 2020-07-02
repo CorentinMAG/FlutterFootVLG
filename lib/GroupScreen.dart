@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'models/Member.dart';
 
-Future<String> CreateOneGroup(CreateGroup createGroup) async {
+Future<Group> CreateOneGroup(CreateGroup createGroup) async {
   final http.Response response = await http.post(
     'https://foot.agenda-crna-n.com/createGroup.php',
     headers: <String, String>{
@@ -18,13 +18,13 @@ Future<String> CreateOneGroup(CreateGroup createGroup) async {
     body: json.encode(createGroup.toJson()),
   );
   if (response.statusCode == 200) {
-    return response.body;
+    return Group.fromJson(json.decode(response.body));
   } else {
     throw Exception('Impossible de créer le groupe');
   }
 }
 
-Future<String> JoinOneGroup(JoinGroup joinGroup) async {
+Future<Group> JoinOneGroup(JoinGroup joinGroup) async {
   final http.Response response = await http.post(
     'https://foot.agenda-crna-n.com/joinGroup.php',
     headers: <String, String>{
@@ -33,7 +33,7 @@ Future<String> JoinOneGroup(JoinGroup joinGroup) async {
     body: json.encode(joinGroup.toJson()),
   );
   if (response.statusCode == 200) {
-    return response.body;
+    return Group.fromJson(json.decode(response.body));
   } else {
     throw Exception('Impossible de rejoindre le groupe, vérifier le code');
   }
@@ -76,8 +76,6 @@ class GroupPage extends StatefulWidget {
 
   List<Group> groups = List<Group>();
   List<Group> templist =List<Group>();
-  bool isLoading =false;
-
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -134,15 +132,17 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   validateData(){
-
     final createGroup = CreateGroup(
       creator: StateContainer.of(context).user,
       groupName: GroupNameController.text
     );
     GroupNameController.clear();
     CreateOneGroup(createGroup).then((value) => {
+    setState(() {
+      groups.add(value);
+    }),
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(value.toString())))
+          .showSnackBar(SnackBar(content: Text("Le groupe ${value.groupName} a été créé")))
     }).catchError((onError)=>{
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text(onError.toString())))
@@ -206,8 +206,11 @@ class _GroupPageState extends State<GroupPage> {
     );
     JoinCodeController.clear();
     JoinOneGroup(joinGroup).then((value) => {
+      setState((){
+        groups.add(value);
+      }),
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(value.toString())))
+          .showSnackBar(SnackBar(content: Text("Vous avez rejoins le groupe ${value.groupName}")))
 
     }).catchError((onError) => {
       Scaffold.of(context)
@@ -271,7 +274,7 @@ class _GroupPageState extends State<GroupPage> {
     return Container(
       child:ListView.builder(
           padding: EdgeInsets.all(16.0),
-          itemCount: data.length,
+          itemCount: groups.length,
           itemBuilder: (BuildContext context, int index) {
 
             return _tile(data[index]);
@@ -305,8 +308,8 @@ class _GroupPageState extends State<GroupPage> {
       future: RetrieveGroup(StateContainer.of(context).user),
       builder: (context,snapshot){
         if(snapshot.hasData){
-          List<Group> data = snapshot.data;
-          return ListGroup(data);
+          groups = snapshot.data;
+          return ListGroup(groups);
         }else if(snapshot.hasError){
           return Text("${snapshot.error}");
         }
