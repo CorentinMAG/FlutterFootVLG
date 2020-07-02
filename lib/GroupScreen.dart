@@ -244,7 +244,6 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget CreateForm(){
-    if(StateContainer.of(context).user.is_admin){
       return Form(
           key: _createFormkey,
           child:Row(
@@ -265,11 +264,8 @@ class _GroupPageState extends State<GroupPage> {
             ],
           )
       );
-    }else{
-      return Container();
     }
 
-  }
   Widget ListGroup(data) {
     return Container(
       child:ListView.builder(

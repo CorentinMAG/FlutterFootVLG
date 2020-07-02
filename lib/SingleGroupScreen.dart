@@ -2,6 +2,10 @@ import 'package:ffootvlg/models/Group.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'evenement_screen.dart';
+import 'info_screen.dart';
+import 'member_screen.dart';
+
 class SingleGroupScreen extends StatelessWidget {
   final Group group;
 
@@ -10,7 +14,7 @@ class SingleGroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text("${group.groupName}"),
@@ -21,16 +25,23 @@ class SingleGroupScreen extends StatelessWidget {
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
+                icon: Icon(Icons.info),
+              ),
+              Tab(
                 icon: Icon(Icons.event),
               ),
               Tab(
                 icon: Icon(Icons.supervisor_account),
-              )
+              ),
             ],
           ),
         ),
-        body: Center(
-          child: Text("Group : ${group.groupName}"),
+        body: TabBarView(
+          children: <Widget>[
+            InfoScreen(group: group),
+            EvenementScreen(),
+            MemberScreen(group: group),
+          ],
         ),
       ),
     );

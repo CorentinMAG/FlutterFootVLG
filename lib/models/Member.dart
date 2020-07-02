@@ -13,6 +13,7 @@ class Member{
   final String inscription_date;
   bool is_admin;
   bool is_superuser;
+  String status;
 
   Member({
     this.id=0,
@@ -24,7 +25,8 @@ class Member{
     this.inscription_date="",
     this.password,
     this.is_admin=false,
-    this.is_superuser=false
+    this.is_superuser=false,
+    this.status=""
   }
   );
 
@@ -39,11 +41,12 @@ class Member{
         "inscription_date":inscription_date,
         "password":password,
         "is_admin":is_admin,
-        "is_superuser":is_superuser
+        "is_superuser":is_superuser,
+        if(status!="") "status":status,
       };
 
   factory Member.fromJson(Map<String, dynamic> json) {
-    return Member(
+    var user = Member(
       id:json['id'],
       last_name: json['last_name'],
       first_name: json['first_name'],
@@ -53,8 +56,12 @@ class Member{
       inscription_date: json['inscription_date'],
       password: json['password'],
       is_admin: json['is_admin'],
-      is_superuser: json['is_superuser']
+      is_superuser: json['is_superuser'],
     );
+    if(json['status']!=null){
+      user.status = json['status'];
+    }
+    return user;
   }
 }
 

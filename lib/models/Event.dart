@@ -1,27 +1,21 @@
 import 'Member.dart';
 
-class Group{
+class Event{
   int id;
-  String groupName;
-  String joinCode;
+  String name;
   String creation_date;
-  bool is_group_admin;
+  String description;
+  int id_group;
   List<Member> members;
 
-  Group({
-    this.id,
-    this.groupName,
-    this.joinCode,
-    this.creation_date,
-    this.is_group_admin,
-    this.members
-});
-  Group.fromJson(Map<String, dynamic> json) {
+  Event({this.id,this.name,this.creation_date,this.description,this.id_group,this.members});
+
+  Event.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    groupName = json['groupName'];
-    joinCode = json['joinCode'];
+    name = json['name'];
     creation_date = json['creation_date'];
-    is_group_admin = json['is_group_admin'];
+    description = json['description'];
+    id_group = json['id_group'];
     if (json['members'] != null) {
       members = new List<Member>();
       json['members'].forEach((v) {
@@ -31,14 +25,15 @@ class Group{
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id']=this.id;
-    data['groupName'] = this.groupName;
-    data['joinCode'] = this.joinCode;
+    data['id'] = this.id;
+    data['name'] = this.name;
     data['creation_date'] = this.creation_date;
-    data['is_group_admin'] = this.is_group_admin;
+    data['description'] = this.description;
+    data['id_group'] = this.id_group;
     if (this.members != null) {
       data['members'] = this.members.map((v) => v.toJson()).toList();
     }
     return data;
   }
+
 }
