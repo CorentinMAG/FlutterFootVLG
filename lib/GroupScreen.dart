@@ -42,7 +42,7 @@ Future<Group> JoinOneGroup(JoinGroup joinGroup) async {
 
 Future<List<Group>> RetrieveGroup(Member user) async {
   final http.Response response = await http.post(
-    'https://foot.agenda-crna-n.com/getGroups.php',
+    'https://foot.agenda-crna-n.com/test.php',
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },

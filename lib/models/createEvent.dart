@@ -22,7 +22,6 @@ class CreateFirstEvent{
           "is_admin":creator.is_admin,
           "is_superuser":creator.is_superuser,
           if(creator.status!="") "status":creator.status,
-          "is_group_admin":creator.is_group_admin
         },
         "event":{
           "name":name,

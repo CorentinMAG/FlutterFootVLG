@@ -24,22 +24,6 @@ Future<Event> CreateOneEvent(CreateFirstEvent createevent) async {
   }
 }
 
-Future<List<Event>> RetrieveEvent(Member user) async {
-  final http.Response response = await http.post(
-    'https://foot.agenda-crna-n.com/getUserEvent.php',
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: json.encode(user.toJson()),
-  );
-  if (response.statusCode == 200) {
-    List jsonResponse = json.decode(response.body) ?? [];
-    return jsonResponse.map((event) => Event.fromJson(event)).toList();
-  } else {
-    throw Exception('Impossible de récupérer les évènements');
-  }
-}
-
 class EvenementScreen extends StatelessWidget {
 
   Group group;
@@ -66,8 +50,6 @@ class CreateEvent extends StatefulWidget {
 
 class _CreateEventState extends State<CreateEvent> {
 
-  List<Event> events=<Event>[];
-
   final EventNameController = TextEditingController();
   final EventDescriptionController = TextEditingController();
   final _createFormkey = GlobalKey<FormState>();
@@ -86,7 +68,7 @@ class _CreateEventState extends State<CreateEvent> {
            if(widget.is_admin)
             EventForm(),
             Expanded(
-              child: _futurebuilder(),
+              child: ListEvent(),
             )
           ],
         );
@@ -157,7 +139,7 @@ class _CreateEventState extends State<CreateEvent> {
     var createevent = CreateFirstEvent(creator: StateContainer.of(context).user,name:EventNameController.text,id_group:widget.group.id,description: EventDescriptionController.text);
     CreateOneEvent(createevent).then((value) => {
       setState((){
-        events.add(value);
+        widget.group.events.add(value);
       }),
     EventNameController.clear(),
       EventDescriptionController.clear(),
@@ -208,38 +190,13 @@ class _CreateEventState extends State<CreateEvent> {
     );
   }
 
-  Widget _futurebuilder(){
-    var user = StateContainer.of(context).user;
-    user.actual_group=widget.group.id;
-    return FutureBuilder<List<Event>>(
-      future: RetrieveEvent(user),
-      builder: (context,snapshot){
-        if(snapshot.hasData){
-          events = snapshot.data;
-          return ListEvent(events);
-        }else if(snapshot.hasError){
-          return Text("${snapshot.error}");
-        }
-        return Container(
-            child: Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.lightBlueAccent,
-                strokeWidth: 10,
-              ),
-            )
-        );
-      },
-    );
-  }
-
-  Widget ListEvent(data) {
+  Widget ListEvent() {
     return Container(
       child:ListView.builder(
           padding: EdgeInsets.all(16.0),
-          itemCount: data.length,
+          itemCount: widget.group.events.length,
           itemBuilder: (BuildContext context, int index) {
-
-            return _tile(data[index]);
+            return _tile(widget.group.events[index]);
           }
       ) ,
     );
