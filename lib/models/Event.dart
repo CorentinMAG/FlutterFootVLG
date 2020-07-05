@@ -6,15 +6,23 @@ class Event{
   String creation_date;
   String description;
   int id_group;
+  bool is_event_admin;
   List<Member> members;
 
-  Event({this.id,this.name,this.creation_date,this.description,this.id_group,this.members});
+  Event({this.id,
+    this.name,
+    this.creation_date="",
+    this.description="",
+    this.id_group,
+    this.is_event_admin=false,
+    this.members});
 
   Event.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     creation_date = json['creation_date'];
     description = json['description'];
+    is_event_admin=json['is_event_admin'];
     id_group = json['id_group'];
     if (json['members'] != null) {
       members = new List<Member>();
@@ -30,10 +38,10 @@ class Event{
     data['creation_date'] = this.creation_date;
     data['description'] = this.description;
     data['id_group'] = this.id_group;
+    data['is_event_admin'] = this.is_event_admin;
     if (this.members != null) {
       data['members'] = this.members.map((v) => v.toJson()).toList();
     }
     return data;
   }
-
 }

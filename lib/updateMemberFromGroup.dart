@@ -1,11 +1,12 @@
-import 'Member.dart';
+import 'models/Group.dart';
+import 'models/Member.dart';
 
-class UpdateMember{
+class UpdateMemberFromGroup{
   final Member admin;
   final Member user;
+  final Group group;
 
-  UpdateMember({this.admin,this.user});
-
+  UpdateMemberFromGroup({this.admin, this.user, this.group});
 
   Map<String, dynamic> toJson() =>
       {
@@ -33,8 +34,10 @@ class UpdateMember{
           "password":admin.password,
           "is_admin":admin.is_admin,
           "is_superuser":admin.is_superuser
+        },
+        "group":{
+          "id":group.id,
+          "name":group.groupName
         }
       };
-
-
 }

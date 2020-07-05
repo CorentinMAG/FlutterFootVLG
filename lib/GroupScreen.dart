@@ -49,7 +49,7 @@ Future<List<Group>> RetrieveGroup(Member user) async {
     body: json.encode(user),
   );
   if (response.statusCode == 200) {
-    List jsonResponse = json.decode(response.body);
+    List jsonResponse = json.decode(response.body) ?? [];
     return jsonResponse.map((group) => Group.fromJson(group)).toList();
 
   } else {
@@ -73,9 +73,6 @@ class GroupScreen extends StatelessWidget {
 
 
 class GroupPage extends StatefulWidget {
-
-  List<Group> groups = List<Group>();
-  List<Group> templist =List<Group>();
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -237,7 +234,6 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
           )
-
         ],
       ),
     );
@@ -280,6 +276,12 @@ class _GroupPageState extends State<GroupPage> {
 
   }
   Widget _tile(group){
+    bool is_admin;
+    group.members.forEach((member) {
+      if(member.id==StateContainer.of(context).user.id){
+        is_admin=member.is_group_admin;
+      }
+    });
     return Column(
       children: <Widget>[
           ListTile(
@@ -291,7 +293,7 @@ class _GroupPageState extends State<GroupPage> {
               ),
             onTap: ()=>{
                 FocusScope.of(context).requestFocus(new FocusNode()),
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SingleGroupScreen(group:group)))
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SingleGroupScreen(group:group,is_admin:is_admin)))
             },
           ),
         Divider(),

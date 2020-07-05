@@ -18,12 +18,11 @@ class DelUser{
           "inscription_date":user.inscription_date,
           "password":user.password,
           "is_admin":user.is_admin,
-          "is_superuser":user.is_superuser
+          "is_superuser":user.is_superuser,
         },
         "group":{
           "id":group.id,
           "groupName":group.groupName,
-          "is_group_admin":group.is_group_admin
         }
       };
 }

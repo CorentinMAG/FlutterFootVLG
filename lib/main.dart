@@ -7,7 +7,7 @@ import 'RegisterScreen.dart';
 import 'list_users.dart';
 
 void main() {
-  runApp(new StateContainer(child: new MyApp()));
+  runApp(StateContainer(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget{

@@ -8,8 +8,9 @@ import 'member_screen.dart';
 
 class SingleGroupScreen extends StatelessWidget {
   final Group group;
+  final bool is_admin;
 
-  SingleGroupScreen({@required this.group});
+  SingleGroupScreen({@required this.group,this.is_admin});
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +39,9 @@ class SingleGroupScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            InfoScreen(group: group),
-            EvenementScreen(group:group),
-            MemberScreen(group: group),
+            InfoScreen(group: group,is_admin:is_admin),
+            EvenementScreen(group:group,is_admin:is_admin),
+            MemberScreen(group: group,is_admin:is_admin),
           ],
         ),
       ),
