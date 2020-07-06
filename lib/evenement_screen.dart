@@ -224,7 +224,6 @@ class _CreateEventState extends State<CreateEvent> {
   Widget ListEvent() {
     return Container(
       child:ListView.builder(
-          padding: EdgeInsets.all(16.0),
           itemCount: widget.group.events.length,
           itemBuilder: (BuildContext context, int index) {
             return _tile(widget.group.events[index]);
@@ -307,7 +306,6 @@ class _CreateEventState extends State<CreateEvent> {
     return Column(
       children: <Widget>[
         Container(
-          width: 500,
           child: Card(
             child: Column(
                 mainAxisSize: MainAxisSize.min,

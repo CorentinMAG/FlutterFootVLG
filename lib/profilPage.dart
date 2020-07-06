@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'models/Member.dart';
 
@@ -16,118 +18,112 @@ class ProfilPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Container(
-        padding:EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Column(
+      body: Column(
+        children: <Widget>[
+          Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.greenAccent, Colors.blueAccent]
+                  )
+              ),
+              child: Container(
+                width: double.infinity,
+                height: 250.0,
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircleAvatar(
+                        child: Icon(Icons.account_circle,size: 100,),
+                        radius: 50.0,
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text(
+                        "${user.first_name} ${user.last_name}",
+                        style: TextStyle(
+                          fontSize: 25.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30.0,horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: 50.0
+                  Text(
+                    "Information:",
+                    style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 28.0
                     ),
                   ),
-                  Icon(Icons.account_circle,size: 200,)
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Text('Nom : ${user.last_name}\n'
+                      'Prénom : ${user.first_name}\n'
+                      'Téléphone : ${user.phone_number}\n'
+                      'Email : ${user.email}\n'
+                      'Date de naissance : ${user.birthday}'
+                    ,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 50.0
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Container(
+            width: 300.00,
+
+            child:RaisedButton(
+              elevation: 5.0,
+              onPressed: (){
+                launch('tel://${user.phone_number}');
+              },
+              padding: EdgeInsets.all(15.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              color: Colors.white,
+              child: Text(
+                'CONTACTER',
+                style: TextStyle(
+                  color: Color(0xFF527DAA),
+                  letterSpacing: 1.5,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'OpenSans',
                 ),
               ),
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Text("Nom : ",style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                Text(user.last_name,style: TextStyle(
-                                    fontSize: 25
-                                ))
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10.0
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text("Prénom : ",style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                Text(user.first_name,style: TextStyle(
-                                    fontSize: 25
-                                ))
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10.0
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text("Email : ",style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                Text(user.email,style: TextStyle(
-                                    fontSize: 25
-                                ))
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10.0
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text("Téléphone : ",style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                Text(user.phone_number,style: TextStyle(
-                                    fontSize: 25
-                                ))
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10.0
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text("Date de naissance : ",style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                ),),
-                                Text(user.birthday,style: TextStyle(
-                                    fontSize: 25
-                                ))
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    )
-                  ]
-              ),
-
-            ],
+            ),
           )
-      )
-
+        ],
+      ),
     );
   }
 }
