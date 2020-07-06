@@ -42,7 +42,7 @@ Future<Group> JoinOneGroup(JoinGroup joinGroup) async {
 
 Future<List<Group>> RetrieveGroup(Member user) async {
   final http.Response response = await http.post(
-    'https://foot.agenda-crna-n.com/test.php',
+    'https://foot.agenda-crna-n.com/getGroups.php',
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -65,7 +65,6 @@ class GroupScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('FootVLG'),
       ),
-      backgroundColor: Colors.blue,
       body: GroupPage(),
     );
   }
@@ -288,7 +287,7 @@ class _GroupPageState extends State<GroupPage> {
               title: RichText(
                 text: TextSpan(
                     text: group.groupName,
-                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    style: TextStyle(color: Colors.black87,fontSize: 20),
                 ),
               ),
             onTap: ()=>{

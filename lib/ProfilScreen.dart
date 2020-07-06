@@ -35,7 +35,6 @@ class ProfilScreen extends StatelessWidget {
           )
         ],
       ),
-      backgroundColor: Colors.blue,
         body: Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 43.0),
@@ -88,11 +87,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.account_circle,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -117,11 +116,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.account_circle,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -145,12 +144,12 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.email,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -174,11 +173,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.phone_android,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -206,11 +205,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.cake,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -232,11 +231,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.lock,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: true,
@@ -258,11 +257,11 @@ class _UpdateFormState extends State<UpdateForm> {
           ),
           prefixIcon: Icon(
             Icons.lock,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: true,

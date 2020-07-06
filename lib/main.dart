@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'HomeScreen.dart';
 import 'RegisterScreen.dart';
+import 'list_event.dart';
 import 'list_users.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget{
         '/login':(context)=>LoginScreen(),
         '/register':(context) => RegisterScreen(),
         '/home':(context) => HomeScreen(),
-        '/listUser':(context) => ListUsers()
+        '/listUser':(context) => ListUsers(),
       }
     );
   }

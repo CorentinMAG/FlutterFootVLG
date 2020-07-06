@@ -15,7 +15,7 @@ class Member{
   bool is_superuser;
   String status;
   bool is_group_admin;
-  int actual_group;
+  bool is_event_admin;
 
   Member({
     this.id=0,
@@ -30,7 +30,7 @@ class Member{
     this.is_superuser=false,
     this.status="",
     this.is_group_admin=false,
-    this.actual_group=0
+    this.is_event_admin=false
   }
   );
 
@@ -48,7 +48,7 @@ class Member{
         "is_superuser":is_superuser,
         if(status!="") "status":status,
         "is_group_admin":is_group_admin,
-        "actual_group":actual_group
+        "is_event_admin":is_event_admin
       };
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -64,7 +64,7 @@ class Member{
       is_admin: json['is_admin'],
       is_superuser: json['is_superuser'],
       is_group_admin:json['is_group_admin'],
-      actual_group: json['actual_group']
+      is_event_admin: json['is_event_admin']
     );
     if(json['status']!=null){
       user.status = json['status'];

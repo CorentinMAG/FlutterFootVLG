@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:ffootvlg/list_event.dart';
 import 'package:ffootvlg/models/Event.dart';
 import 'package:ffootvlg/models/Member.dart';
+import 'package:ffootvlg/models/updateEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +26,36 @@ Future<Event> CreateOneEvent(CreateFirstEvent createevent) async {
   }
 }
 
+Future<String> Voted(UpdateVote vote) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/updateUserChoice.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: json.encode(vote.toJson()),
+  );
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Impossible pour l\'utilisateur de voter');
+  }
+}
+
+Future<String> deleteEvent(Event event) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/deleteEvent.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: json.encode(event.toJson()),
+  );
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Impossible de supprimer l\'event');
+  }
+}
+
 class EvenementScreen extends StatelessWidget {
 
   Group group;
@@ -33,7 +65,6 @@ class EvenementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: CreateEvent(group: group,is_admin:is_admin)
       );
   }
@@ -200,12 +231,83 @@ class _CreateEventState extends State<CreateEvent> {
           }
       ) ,
     );
-
   }
-  Widget _tile(event){
+
+  CheckUpdate(String vote,Member user,Event event){
+    UpdateVote myVote = UpdateVote(user:user,event:event,vote:vote);
+    if(vote!=event.vote){
+      Voted(myVote).then((value) => {
+        if(vote=='participe'){
+          setState((){
+            event.participe++;
+          }),
+          if(event.vote=="participe_pas"){
+            setState((){
+              event.participe_pas--;
+            })
+          }else if(event.vote=="peut_etre"){
+            setState((){
+              event.peut_etre--;
+            })
+          },
+          event.vote='participe'
+        }else if(vote=='participe_pas'){
+          setState((){
+            event.participe_pas++;
+          }),
+          if(event.vote=="participe"){
+            setState((){
+              event.participe--;
+            })
+          }else if(event.vote=="peut_etre"){
+            setState((){
+              event.peut_etre--;
+            })
+          },
+          event.vote='participe_pas'
+        }else{
+          setState((){
+            event.peut_etre++;
+          }),
+          if(event.vote=="participe_pas"){
+            setState((){
+              event.participe_pas--;
+            })
+          }else if(event.vote=="participe"){
+            setState((){
+              event.participe--;
+            })
+          },
+          event.vote='peut_etre'
+        },
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text(value.toString())))
+      }).catchError((onError)=>{
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text(onError.toString())))
+      });
+
+    }
+  }
+
+  deleteevent(event){
+    deleteEvent(event).then((value) => {
+      setState((){
+        widget.group.events.remove(event);
+      }),
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(value.toString()))),
+    }).catchError((onError)=>{
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(onError.toString()))),
+    });
+  }
+
+  Widget _tile(Event event){
+    var user = event.members.firstWhere((element) => element.email==StateContainer.of(context).user.email);
+    var is_admin=user.is_event_admin;
     return Column(
       children: <Widget>[
         Container(
+          width: 500,
           child: Card(
             child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -214,23 +316,44 @@ class _CreateEventState extends State<CreateEvent> {
                   leading: Icon(Icons.public),
                   title: Text(event.name),
                   subtitle: Text(event.description),
+                  onTap: ()=>{
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => ListEventMember(event:event))),
+                  },
+                  trailing: Column(
+                    children: <Widget>[
+                      if(is_admin)
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: ()=>{
+                            deleteevent(event)
+                          },
+                        ),
+                    ],
+                  ),
                 ),
                 ButtonBar(
                   children: <Widget>[
                     FlatButton(
-                      child: Text('Je participe',style: TextStyle(color: Colors.green),),
-                      onPressed: ()=>{},
+                      child: Text('Je participe ${event.participe}',style: TextStyle(color: Colors.green),),
+                      onPressed: ()=>{
+                        CheckUpdate('participe',StateContainer.of(context).user,event)
+                      },
                     ),
                     FlatButton(
-                      child: Text('Je ne participe pas',style: TextStyle(color: Colors.red),),
-                      onPressed: ()=>{},
+                      child: Text('Je ne participe pas ${event.participe_pas}',style: TextStyle(color: Colors.red),),
+                      onPressed: ()=>{
+                        CheckUpdate('participe_pas',StateContainer.of(context).user,event)
+                      },
                     ),
                     FlatButton(
-                      child: Text('Peut être',style: TextStyle(color: Colors.orange),),
-                      onPressed: ()=>{},
+                      child: Text('Peut être ${event.peut_etre}',style: TextStyle(color: Colors.orange),),
+                      onPressed: ()=>{
+                        CheckUpdate('peut_etre',StateContainer.of(context).user,event)
+                      },
                     )
                   ],
-                )
+                ),
               ],
             ),
           ),

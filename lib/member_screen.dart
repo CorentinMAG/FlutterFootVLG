@@ -47,7 +47,6 @@ class MemberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: Container(
         child: UserList(group: group,is_admin:is_admin)
       ),
@@ -119,13 +118,13 @@ class _UserListState extends State<UserList> {
 
   Widget ListViewItem(user) {
     bool _value = user.is_group_admin;
-      return Column(
-        children: <Widget>[
+      return Card(
+        child:
           ListTile(
             title: RichText(
               text: TextSpan(
                 text: "${user.last_name} ${user.first_name}",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.black87, fontSize: 20),
               ),
             ),
             trailing: Wrap(
@@ -159,8 +158,6 @@ class _UserListState extends State<UserList> {
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => ProfilPage(user: user))),
           ),
-          Divider(),
-        ],
       );
   }
 }

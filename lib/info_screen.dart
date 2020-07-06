@@ -32,7 +32,6 @@ class InfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body:Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -67,8 +66,7 @@ class _DelButtonState extends State<DelButton> {
     if(widget.is_admin){
       return Container(
         child: FlatButton(
-          color: Colors.red,
-          child: Text('SUPPRIMER GROUPE',style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.bold),),
+          child: Text('SUPPRIMER GROUPE',style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),),
           onPressed: ()=> deleteGroup(),
         ),
       );
