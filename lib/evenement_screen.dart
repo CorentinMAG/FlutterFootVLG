@@ -232,13 +232,14 @@ class _CreateEventState extends State<CreateEvent> {
     );
   }
 
-  CheckUpdate(String vote,Member user,Event event){
+  CheckUpdate(String vote,Member user,Event event,List<bool> isSelected){
     UpdateVote myVote = UpdateVote(user:user,event:event,vote:vote);
     if(vote!=event.vote){
       Voted(myVote).then((value) => {
         if(vote=='participe'){
           setState((){
             event.participe++;
+            isSelected=[true,false,false];
           }),
           if(event.vote=="participe_pas"){
             setState((){
@@ -253,6 +254,7 @@ class _CreateEventState extends State<CreateEvent> {
         }else if(vote=='participe_pas'){
           setState((){
             event.participe_pas++;
+            isSelected=[false,true,false];
           }),
           if(event.vote=="participe"){
             setState((){
@@ -267,6 +269,7 @@ class _CreateEventState extends State<CreateEvent> {
         }else{
           setState((){
             event.peut_etre++;
+            isSelected=[false,false,true];
           }),
           if(event.vote=="participe_pas"){
             setState((){
@@ -301,6 +304,8 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _tile(Event event){
+    List<bool> isSelected;
+    event.vote=='participe'? isSelected=[true, false, false] : event.vote=='participe_pas'? isSelected=[false, true, false] :isSelected=[false, false, true];
     var user = event.members.firstWhere((element) => element.email==StateContainer.of(context).user.email);
     var is_admin=user.is_event_admin;
     return Column(
@@ -332,7 +337,37 @@ class _CreateEventState extends State<CreateEvent> {
                 ),
                 ButtonBar(
                   children: <Widget>[
-                    FlatButton(
+                    ToggleButtons(
+                      children: <Widget>[
+                          FlatButton(
+                              child: Text('Je participe ${event.participe}',style: TextStyle(color: Colors.green),),
+                              onPressed: ()=>{
+                              CheckUpdate('participe',StateContainer.of(context).user,event,isSelected)
+                              },
+                          ),
+                          FlatButton(
+                              child: Text('Je ne participe pas ${event.participe_pas}',style: TextStyle(color: Colors.red),),
+                              onPressed: ()=>{
+                              CheckUpdate('participe_pas',StateContainer.of(context).user,event,isSelected)
+                              },
+                          ),
+                          FlatButton(
+                              child: Text('Peut être ${event.peut_etre}',style: TextStyle(color: Colors.orange),),
+                              onPressed: ()=>{
+                              CheckUpdate('peut_etre',StateContainer.of(context).user,event,isSelected)
+                              },
+                          ),
+
+                      ],
+                      renderBorder: false,
+                      onPressed: (int index) {
+                        setState(() {
+                          isSelected[index] = !isSelected[index];
+                        });
+                      },
+                      isSelected: isSelected,
+                    )
+                    /*FlatButton(
                       child: Text('Je participe ${event.participe}',style: TextStyle(color: Colors.green),),
                       onPressed: ()=>{
                         CheckUpdate('participe',StateContainer.of(context).user,event)
@@ -349,7 +384,7 @@ class _CreateEventState extends State<CreateEvent> {
                       onPressed: ()=>{
                         CheckUpdate('peut_etre',StateContainer.of(context).user,event)
                       },
-                    )
+                    )*/
                   ],
                 ),
               ],
