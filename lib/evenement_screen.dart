@@ -85,6 +85,7 @@ class _CreateEventState extends State<CreateEvent> {
   final EventDescriptionController = TextEditingController();
   final _createFormkey = GlobalKey<FormState>();
 
+
   @override
   void dispose() {
     EventNameController.dispose();
@@ -367,24 +368,6 @@ class _CreateEventState extends State<CreateEvent> {
                       },
                       isSelected: isSelected,
                     )
-                    /*FlatButton(
-                      child: Text('Je participe ${event.participe}',style: TextStyle(color: Colors.green),),
-                      onPressed: ()=>{
-                        CheckUpdate('participe',StateContainer.of(context).user,event)
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('Je ne participe pas ${event.participe_pas}',style: TextStyle(color: Colors.red),),
-                      onPressed: ()=>{
-                        CheckUpdate('participe_pas',StateContainer.of(context).user,event)
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('Peut être ${event.peut_etre}',style: TextStyle(color: Colors.orange),),
-                      onPressed: ()=>{
-                        CheckUpdate('peut_etre',StateContainer.of(context).user,event)
-                      },
-                    )*/
                   ],
                 ),
               ],
