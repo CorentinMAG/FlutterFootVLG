@@ -52,7 +52,6 @@ class EvenementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: false,
       body: CreateEvent(group: group,is_admin:is_admin)
       );
   }
@@ -84,6 +83,7 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _buildCreateBtn(){
+    Intl.defaultLocale ='fr_FR';
     return Container(
       width: double.infinity,
       child:FlatButton(
@@ -201,7 +201,7 @@ class _CreateEventState extends State<CreateEvent> {
               children: <Widget>[
                 ListTile(
                   leading: Icon(Icons.public),
-                  title: Text(event.name),
+                  title: Text(event.name,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
                   subtitle: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
