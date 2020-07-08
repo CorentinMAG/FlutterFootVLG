@@ -1,30 +1,17 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:ffootvlg/create_event.dart';
 import 'package:ffootvlg/list_event.dart';
 import 'package:ffootvlg/models/Event.dart';
 import 'package:ffootvlg/models/Member.dart';
 import 'package:ffootvlg/models/updateEvent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:intl/intl.dart';
 import 'models/Group.dart';
-import 'models/createEvent.dart';
-
-Future<Event> CreateOneEvent(CreateFirstEvent createevent) async {
-  final http.Response response = await http.post(
-    'https://foot.agenda-crna-n.com/createEvent.php',
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: json.encode(createevent.toJson()),
-  );
-  if (response.statusCode == 200) {
-    return Event.fromJson(json.decode(response.body));
-  } else {
-    throw Exception('Impossible de créer l\'évènement');
-  }
-}
 
 Future<String> Voted(UpdateVote vote) async {
   final http.Response response = await http.post(
@@ -65,6 +52,7 @@ class EvenementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: false,
       body: CreateEvent(group: group,is_admin:is_admin)
       );
   }
@@ -81,24 +69,13 @@ class CreateEvent extends StatefulWidget {
 
 class _CreateEventState extends State<CreateEvent> {
 
-  final EventNameController = TextEditingController();
-  final EventDescriptionController = TextEditingController();
-  final _createFormkey = GlobalKey<FormState>();
-
-
-  @override
-  void dispose() {
-    EventNameController.dispose();
-    EventDescriptionController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
       return Column(
+        mainAxisSize: MainAxisSize.max,
           children: <Widget>[
            if(widget.is_admin)
-            EventForm(),
+             _buildCreateBtn() ,
             Expanded(
               child: ListEvent(),
             )
@@ -106,120 +83,26 @@ class _CreateEventState extends State<CreateEvent> {
         );
   }
 
-  Widget _buildCreateGroup(){
-    return TextFormField(
-      textCapitalization: TextCapitalization.sentences,
-      controller: EventNameController,
-      decoration: InputDecoration(
-          border: InputBorder.none,
-          labelText: 'Nom de l\'évènement',
-          labelStyle: TextStyle(
-              color: Colors.black
-          ),
-          prefixIcon: Icon(
-            Icons.create,
-            color: Colors.black,
-          )
-      ),
-      style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'OpenSans'
-      ),
-      obscureText: false,
-      autofocus: false,
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Ce champ ne peut pas être vide';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildDescription(){
-    return TextFormField(
-      textCapitalization: TextCapitalization.sentences,
-      controller: EventDescriptionController,
-      decoration: InputDecoration(
-          border: InputBorder.none,
-          labelText: 'Description de l\'évènement',
-          labelStyle: TextStyle(
-              color: Colors.black
-          ),
-          prefixIcon: Icon(
-            Icons.create,
-            color: Colors.black,
-          )
-      ),
-      style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'OpenSans'
-      ),
-      obscureText: false,
-      autofocus: false,
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Ce champ ne peut pas être vide';
-        }
-        return null;
-      },
-    );
-  }
-
-  validateData(){
-
-    var createevent = CreateFirstEvent(creator: StateContainer.of(context).user,name:EventNameController.text,id_group:widget.group.id,description: EventDescriptionController.text);
-    CreateOneEvent(createevent).then((value) => {
-      setState((){
-        widget.group.events.add(value);
-      }),
-    EventNameController.clear(),
-      EventDescriptionController.clear(),
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("Vous avez rejoins l\'évènement ${value.name}")))
-
-    }).catchError((onError)=>{
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(onError.toString())))
-    });
-
-  }
-
   Widget _buildCreateBtn(){
-    return FlatButton(
-      child: Text('CREER'),
-      onPressed: (){
-        if(_createFormkey.currentState.validate()){
-          validateData();
-        }
-      },
+    return Container(
+      width: double.infinity,
+      child:FlatButton(
+          child: Text('CREER'),
+          onPressed: (){
+            _displayResult(context);
+          }
+      ),
     );
-  }
 
-  Widget EventForm(){
-    return Form(
-      key: _createFormkey,
-      child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Expanded(
-            child: Card(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _buildCreateGroup(),
-                  ),
-                  Expanded(
-                    child: _buildDescription(),
-                  ),
-                  _buildCreateBtn()
-                ],
-              ),
-            ),
-          )
-        ],
-      )
-    );
+  }
+  _displayResult(BuildContext context) async{
+    final newEvent = await Navigator.push(context,
+    MaterialPageRoute(builder: (context)=>CreateEventForm(group: widget.group,)));
+    if(newEvent!=null){
+      setState(() {
+        widget.group.events.add(newEvent);
+      });
+    }
   }
 
   Widget ListEvent() {
@@ -319,7 +202,18 @@ class _CreateEventState extends State<CreateEvent> {
                 ListTile(
                   leading: Icon(Icons.public),
                   title: Text(event.name),
-                  subtitle: Text(event.description),
+                  subtitle: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 8.0,),
+                      Text("${DateFormat.yMMMMd().format(DateTime.parse(event.datetime))} ${event.datetime.split(" ")[1].split(".")[0]}",style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text("${event.endroit}",style: TextStyle(fontWeight: FontWeight.bold),),
+                      SizedBox(height: 8.0,),
+                      Text("${event.description}")
+                    ],
+                  ),
                   onTap: ()=>{
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) => ListEventMember(event:event))),

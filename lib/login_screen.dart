@@ -27,7 +27,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body:  Row(
         children: <Widget>[
           Padding(
@@ -58,6 +57,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
 
   final _loginFormKey = GlobalKey<FormState>();
+  bool _isObscure=true;
 
   final EmailController = TextEditingController();
   final PasswordController = TextEditingController();
@@ -73,18 +73,19 @@ class _LoginFormState extends State<LoginForm> {
     return TextFormField(
       controller: EmailController,
       decoration: InputDecoration(
-        border: InputBorder.none,
+        filled: true,
+        border: UnderlineInputBorder(),
         labelText: 'Entrer votre email',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
         prefixIcon: Icon(
           Icons.email,
-          color: Colors.white,
+          color: Colors.black87,
         )
       ),
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black87,
         fontFamily: 'OpenSans'
       ),
       keyboardType: TextInputType.emailAddress,
@@ -112,21 +113,30 @@ class _LoginFormState extends State<LoginForm> {
     return TextFormField(
       controller: PasswordController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Entrer votre mot de passe',
           labelStyle: TextStyle(
-            color: Colors.white
+            color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.lock,
-            color: Colors.white,
-          )
+            color: Colors.black87,
+          ),
+        suffixIcon: GestureDetector(
+          onTap: (){
+            setState(() {
+              _isObscure =!_isObscure;
+            });
+          },
+          child: Icon(_isObscure ? Icons.visibility : Icons.visibility_off,),
+        )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
-      obscureText: true,
+      obscureText: _isObscure,
       autofocus: false,
       validator: (value) {
         if (value.isEmpty) {
@@ -185,7 +195,7 @@ class _LoginFormState extends State<LoginForm> {
             TextSpan(
               text: 'Pas encore inscrit? ',
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 18.0,
                 fontWeight: FontWeight.w400,
               ),
@@ -193,7 +203,7 @@ class _LoginFormState extends State<LoginForm> {
             TextSpan(
               text: 'Créer un compte',
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -211,6 +221,7 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: <Widget>[
           _buildloginEmail(),
+          SizedBox(height: 24.0,),
         _buildloginPassword(),
         _buildLoginBtn(),
           _buildSignupBtn()

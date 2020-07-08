@@ -1,12 +1,12 @@
+import 'package:ffootvlg/models/Event.dart';
+
 import 'Member.dart';
 
 class CreateFirstEvent{
   Member creator;
-  String name;
-  int id_group;
-  String description;
+  Event event;
 
-  CreateFirstEvent({this.creator,this.name,this.id_group,this.description});
+  CreateFirstEvent({this.creator,this.event});
 
   Map<String, dynamic> toJson() =>
       {
@@ -24,9 +24,11 @@ class CreateFirstEvent{
           if(creator.status!="") "status":creator.status,
         },
         "event":{
-          "name":name,
-          "id_group":id_group,
-          "description":description
+          "name":event.name,
+          "id_group":event.id_group,
+          "description":event.description,
+          "datetime":event.datetime,
+          "endroit":event.endroit
         }
       };
 }

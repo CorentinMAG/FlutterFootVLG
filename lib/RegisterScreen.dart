@@ -25,8 +25,8 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       appBar: AppBar(
+        title: Text('Inscription'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -50,6 +50,7 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
 
   final _registerFormKey = GlobalKey<FormState>();
+  bool _isObscure=true;
 
   final LastNameController = TextEditingController();
   final FirstNameController = TextEditingController();
@@ -64,18 +65,19 @@ class _RegisterFormState extends State<RegisterForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: LastNameController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Nom',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.account_circle,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -93,14 +95,15 @@ class _RegisterFormState extends State<RegisterForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: FirstNameController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Prénom',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.account_circle,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
@@ -121,19 +124,20 @@ class _RegisterFormState extends State<RegisterForm> {
     return TextFormField(
       controller: EmailController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Email',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.email,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -149,19 +153,20 @@ class _RegisterFormState extends State<RegisterForm> {
       controller: PhoneController,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
+        filled: true,
         counterText: "",
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
           labelText: 'Numéro de téléphone',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.phone_android,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -181,19 +186,20 @@ class _RegisterFormState extends State<RegisterForm> {
       keyboardType: TextInputType.datetime,
       controller: BirthdayController,
       decoration: InputDecoration(
+        filled: true,
         counterText: "",
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
           labelText: 'Date de naissance (AAAA-mm-jj)',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.cake,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -208,21 +214,30 @@ class _RegisterFormState extends State<RegisterForm> {
       keyboardType: TextInputType.visiblePassword,
       controller: PasswordController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Mot de passe',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.lock,
-            color: Colors.white,
-          )
+            color: Colors.black87,
+          ),
+        suffixIcon: GestureDetector(
+          onTap: (){
+            setState(() {
+              _isObscure = !_isObscure;
+            });
+          },
+          child: Icon(_isObscure ? Icons.visibility : Icons.visibility_off,color: Colors.black87,),
+        )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
-      obscureText: true,
+      obscureText: _isObscure,
       autofocus: false,
       validator: (value) {
        return _PasswordValidator(value);
@@ -234,18 +249,19 @@ class _RegisterFormState extends State<RegisterForm> {
       controller: ConfirmPasswordController,
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Confirmer votre mot de passe',
           labelStyle: TextStyle(
-              color: Colors.white
+              color: Colors.black87
           ),
           prefixIcon: Icon(
             Icons.lock,
-            color: Colors.white,
+            color: Colors.black87,
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: true,
@@ -373,13 +389,21 @@ class _RegisterFormState extends State<RegisterForm> {
         child:SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              SizedBox(height: 24.0,),
               _buildRegisterLastName(),
+              SizedBox(height: 24.0,),
               _buildRegisterFirstName(),
+              SizedBox(height: 24.0,),
               _buildRegisterEmail(),
+              SizedBox(height: 24.0,),
               _buildRegisterPhone(),
+              SizedBox(height: 24.0,),
               _buildRegisterBirthday(),
+              SizedBox(height: 24.0,),
               _buildRegisterPassword(),
+              SizedBox(height: 24.0,),
               _buildRegisterConfirmPassword(),
+              SizedBox(height: 12.0,),
               _buildRegisterBtn()
             ],
           )

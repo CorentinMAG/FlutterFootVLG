@@ -36,11 +36,8 @@ class ProfilScreen extends StatelessWidget {
         ],
       ),
         body: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 43.0),
             child: UpdateForm(user:StateContainer.of(context).user),
           ),
-        )
     );
   }
 }
@@ -58,6 +55,9 @@ class UpdateForm extends StatefulWidget {
 class _UpdateFormState extends State<UpdateForm> {
 
   final _updateFormKey = GlobalKey<FormState>();
+
+  bool _isObscureTEXT=true;
+
   TextEditingController LastNameController;
   TextEditingController FirstNameController;
   TextEditingController EmailController;
@@ -80,7 +80,8 @@ class _UpdateFormState extends State<UpdateForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: LastNameController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Nom',
           labelStyle: TextStyle(
               color: Colors.black
@@ -109,7 +110,8 @@ class _UpdateFormState extends State<UpdateForm> {
       textCapitalization: TextCapitalization.sentences,
       controller: FirstNameController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
+          filled: true,
           labelText: 'Prénom',
           labelStyle: TextStyle(
               color: Colors.black
@@ -137,7 +139,8 @@ class _UpdateFormState extends State<UpdateForm> {
     return TextFormField(
       controller: EmailController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
+          filled: true,
           labelText: 'Email',
           labelStyle: TextStyle(
               color: Colors.black
@@ -165,8 +168,9 @@ class _UpdateFormState extends State<UpdateForm> {
       controller: PhoneController,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
+        filled: true,
           counterText: "",
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
           labelText: 'Numéro de téléphone',
           labelStyle: TextStyle(
               color: Colors.black
@@ -197,8 +201,9 @@ class _UpdateFormState extends State<UpdateForm> {
       keyboardType: TextInputType.datetime,
       controller: BirthdayController,
       decoration: InputDecoration(
+        filled: true,
           counterText: "",
-          border: InputBorder.none,
+          border: UnderlineInputBorder(),
           labelText: 'Date de naissance (AAAA-mm-jj)',
           labelStyle: TextStyle(
               color: Colors.black
@@ -224,7 +229,8 @@ class _UpdateFormState extends State<UpdateForm> {
       keyboardType: TextInputType.visiblePassword,
       controller: PasswordController,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Mot de passe',
           labelStyle: TextStyle(
               color: Colors.black
@@ -232,13 +238,22 @@ class _UpdateFormState extends State<UpdateForm> {
           prefixIcon: Icon(
             Icons.lock,
             color: Colors.black87,
-          )
+          ),
+        suffixIcon: GestureDetector(
+          onTap: (){
+            print(_isObscureTEXT);
+            setState(() {
+              _isObscureTEXT=!_isObscureTEXT;
+            });
+          },
+          child: Icon(_isObscureTEXT ? Icons.visibility : Icons.visibility_off),
+        )
       ),
       style: TextStyle(
           color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
-      obscureText: true,
+      obscureText: _isObscureTEXT,
       autofocus: false,
       validator: (value) {
         return _PasswordValidator(value);
@@ -250,7 +265,8 @@ class _UpdateFormState extends State<UpdateForm> {
       controller: ConfirmPasswordController,
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
-          border: InputBorder.none,
+        filled: true,
+          border: UnderlineInputBorder(),
           labelText: 'Confirmer votre mot de passe',
           labelStyle: TextStyle(
               color: Colors.black
@@ -381,15 +397,24 @@ class _UpdateFormState extends State<UpdateForm> {
       key: _updateFormKey,
       child: Container(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: <Widget>[
+              SizedBox(height: 24.0,),
               _buildUpdateLastName(),
+              SizedBox(height: 24.0,),
               _buildUpdateFirstName(),
+              SizedBox(height: 24.0,),
               _buildUpdateEmail(),
+              SizedBox(height: 24.0,),
               _buildUpdatePhone(),
+              SizedBox(height: 24.0,),
               _buildUpdateBirthday(),
+              SizedBox(height: 24.0,),
               _buildUpdatePassword(),
+              SizedBox(height: 24.0,),
               _buildUpdateConfirmPassword(),
+              SizedBox(height: 12.0,),
               _buildUpdateBtn()
             ],
           ),

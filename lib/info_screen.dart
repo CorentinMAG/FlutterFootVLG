@@ -37,9 +37,12 @@ class InfoScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Center(
-              child: Text("Code pour rejoindre le groupe : \n${group.joinCode}",style: TextStyle(
-                fontSize: 25,
-              ),),
+              child: Column(
+                children: <Widget>[
+                  Text("Code pour rejoindre le groupe :",style: TextStyle(fontSize: 25.0),),
+                  Text("${group.joinCode}",style: TextStyle(fontSize: 25.0),)
+                ],
+              ),
             ),
             DelButton(group,is_admin)
           ],
