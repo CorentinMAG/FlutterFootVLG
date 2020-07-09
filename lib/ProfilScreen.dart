@@ -400,6 +400,9 @@ class _UpdateFormState extends State<UpdateForm> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: <Widget>[
+              Container(
+                child: Icon(Icons.account_circle,size: 200,),
+              ),
               SizedBox(height: 24.0,),
               _buildUpdateLastName(),
               SizedBox(height: 24.0,),

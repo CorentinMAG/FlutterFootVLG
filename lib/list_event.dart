@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 
 class ListEventMember extends StatelessWidget {
   final Event event;
+  final bool is_admin;
 
-  ListEventMember({@required this.event});
+  ListEventMember({@required this.event,this.is_admin});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class ListEventMember extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            ParticipeScreen(event:event),
+            ParticipeScreen(event:event,is_admin:is_admin),
             ParticipePasScreen(event:event),
             PeutEtreScreen(event:event),
           ],

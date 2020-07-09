@@ -216,7 +216,7 @@ class _CreateEventState extends State<CreateEvent> {
                   ),
                   onTap: ()=>{
                     Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => ListEventMember(event:event))),
+                        builder: (context) => ListEventMember(event:event,is_admin:is_admin))),
                   },
                   trailing: Column(
                     children: <Widget>[

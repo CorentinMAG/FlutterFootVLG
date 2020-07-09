@@ -127,6 +127,9 @@ class _UserListState extends State<UserList> {
                 style: TextStyle(color: Colors.black87, fontSize: 20),
               ),
             ),
+            leading: Container(
+              child: Icon(Icons.account_circle,size: 35,),
+            ),
             trailing: Wrap(
               spacing: 5,
               children: <Widget>[
