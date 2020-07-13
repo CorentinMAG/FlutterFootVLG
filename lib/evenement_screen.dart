@@ -70,6 +70,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
+    Intl.defaultLocale ='fr_FR';
       return Column(
         mainAxisSize: MainAxisSize.max,
           children: <Widget>[
@@ -83,7 +84,6 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _buildCreateBtn(){
-    Intl.defaultLocale ='fr_FR';
     return Container(
       width: double.infinity,
       child:FlatButton(

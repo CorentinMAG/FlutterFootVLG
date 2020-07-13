@@ -170,16 +170,21 @@ class _ListEventMemberState extends State<ListEventMember> {
               controller: scrollController,
               itemCount: 1,
               itemBuilder: (BuildContext context, int index){
-                return Column(
-                  children: <Widget>[
-                    Text('Mon Equipe'),
-                    ListTile(
-                      title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team}'),
-                    ),
-                    ListTile(
-                      title: Text('Score : ${widget.event.sheetA.score}'),
-                    )
-                  ],
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 43.0),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 14.0,),
+                      Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
+                      SizedBox(height: 24.0,),
+                      ListTile(
+                        title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team ?? "Pas de données..."}',style: TextStyle(color: Colors.white,fontSize: 20.0),),
+                      ),
+                      ListTile(
+                        title: Text('Score : ${widget.event.sheetA.score ?? "Pas de données..."}',style:TextStyle(color: Colors.white,fontSize: 20.0)),
+                      )
+                    ],
+                  ),
                 );
               },
             ),
@@ -201,24 +206,27 @@ class _ListEventMemberState extends State<ListEventMember> {
                   topRight: Radius.circular(8)
               )
           ),
-          child: Scrollbar(
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index){
-                return Column(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index){
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 43.0),
+                child: Column(
                   children: <Widget>[
-                    Text('Mon Equipe'),
+                    SizedBox(height: 14.0,),
+                    Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
+                    SizedBox(height: 24.0,),
                     ListTile(
-                      title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team}'),
+                      title: Text('Equipe Adverse : ${widget.event.sheetB.adverse_team ?? "Pas de données..."}',style: TextStyle(color: Colors.white,fontSize: 20.0),),
                     ),
                     ListTile(
-                      title: Text('Score : ${widget.event.sheetB.score}'),
+                      title: Text('Score : ${widget.event.sheetB.score ?? "Pas de données..."}',style:TextStyle(color: Colors.white,fontSize: 20.0)),
                     )
                   ],
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },
@@ -232,6 +240,10 @@ class _ListEventMemberState extends State<ListEventMember> {
       builder: (BuildContext context,ScrollController scrollController){
         return Container(
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8)
+            ),
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
@@ -248,31 +260,43 @@ class _ListEventMemberState extends State<ListEventMember> {
             controller: scrollController,
             itemCount: 1,
             itemBuilder: (BuildContext context, int index){
-              return Column(
-                children: <Widget>[
-                Form(
-                key: _TeamAFormKey,
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 43.0),
                 child: Column(
                   children: <Widget>[
-                    Text("Equipe A"),
-                    _buildRegisterAdverseTeamA(),
-                    _buildRegisterScoreTeamA(),
-                    _buildRegisterBtnA()
+                    Form(
+                      key: _TeamAFormKey,
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(height: 14.0,),
+                          Text("Feuille de match",style: TextStyle(color: Colors.white,fontSize: 34.0),),
+                          SizedBox(height: 14.0,),
+                          Text("Equipe A",style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                          SizedBox(height: 24.0,),
+                          _buildRegisterAdverseTeamA(),
+                          SizedBox(height: 24.0,),
+                          _buildRegisterScoreTeamA(),
+                          SizedBox(height: 12.0,),
+                          _buildRegisterBtnA()
+                        ],
+                      ),
+                    ),
+                    Form(
+                      key: _TeamBFormKey,
+                      child: Column(
+                        children: <Widget>[
+                          Text("Equipe B",style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                          SizedBox(height: 24.0,),
+                          _buildRegisterAdverseTeamB(),
+                          SizedBox(height: 24.0,),
+                          _buildRegisterScoreTeamB(),
+                          SizedBox(height: 12.0,),
+                          _buildRegisterBtnB()
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              ),
-                  Form(
-                    key: _TeamBFormKey,
-                    child: Column(
-                      children: <Widget>[
-                        Text("Equipe B"),
-                        _buildRegisterAdverseTeamB(),
-                        _buildRegisterScoreTeamB(),
-                        _buildRegisterBtnB()
-                      ],
-                    ),
-                  )
-                ],
               );
             },
           ),
@@ -289,15 +313,15 @@ class _ListEventMemberState extends State<ListEventMember> {
           border: UnderlineInputBorder(),
           labelText: 'Equipe adverse',
           labelStyle: TextStyle(
-              color: Colors.black87
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.flag,
-            color: Colors.black87,
+            color: Colors.white,
           )
       ),
       style: TextStyle(
-          color: Colors.black87,
+          color: Colors.white,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -314,20 +338,21 @@ class _ListEventMemberState extends State<ListEventMember> {
     return TextFormField(
       controller: ScoreTeamA,
       decoration: InputDecoration(
+        hintText: "5-3",
           filled: true,
           border: UnderlineInputBorder(),
           labelText: 'score',
           labelStyle: TextStyle(
-              color: Colors.black87
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.score,
-            color: Colors.black87,
+            color: Colors.white,
           )
       ),
       keyboardType: TextInputType.datetime,
       style: TextStyle(
-          color: Colors.black87,
+          color: Colors.white,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -371,7 +396,7 @@ class _ListEventMemberState extends State<ListEventMember> {
     final Sheet sheet= Sheet(
       id_event: widget.event.id,
       adverse_team: AdverseTeamAController.text,
-      score: ScoreTeamA.text,
+      score: ScoreTeamA.text=="" ? null : ScoreTeamA.text,
       nb_sheet: "A"
     );
     POSTTeam(sheet).then((value) => {
@@ -404,15 +429,15 @@ class _ListEventMemberState extends State<ListEventMember> {
           border: UnderlineInputBorder(),
           labelText: 'Equipe adverse',
           labelStyle: TextStyle(
-              color: Colors.black87
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.flag,
-            color: Colors.black87,
+            color: Colors.white,
           )
       ),
       style: TextStyle(
-          color: Colors.black87,
+          color: Colors.white,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -430,19 +455,20 @@ class _ListEventMemberState extends State<ListEventMember> {
       controller: ScoreTeamB,
       decoration: InputDecoration(
           filled: true,
+          hintText: "5-3",
           border: UnderlineInputBorder(),
           labelText: 'score',
           labelStyle: TextStyle(
-              color: Colors.black87
+              color: Colors.white
           ),
           prefixIcon: Icon(
             Icons.score,
-            color: Colors.black87,
+            color: Colors.white,
           )
       ),
       keyboardType: TextInputType.datetime,
       style: TextStyle(
-          color: Colors.black87,
+          color: Colors.white,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
