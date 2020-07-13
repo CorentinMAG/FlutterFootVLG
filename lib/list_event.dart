@@ -1,50 +1,484 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:ffootvlg/models/Event.dart';
+import 'package:ffootvlg/models/Member.dart';
+import 'package:ffootvlg/models/sheet.dart';
 import 'package:ffootvlg/participe_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class ListEventMember extends StatelessWidget {
+Future<Sheet> GETTeamA(Sheet sheet) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/teamASheet.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(sheet),
+  );
+  if (response.statusCode == 200) {
+    return Sheet.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('pas de données');
+  }
+}
+
+Future<Sheet> GETTeamB(Sheet sheet) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/teamBSheet.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(sheet),
+  );
+  if (response.statusCode == 200) {
+    return Sheet.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('pas de données');
+  }
+}
+
+Future<String> POSTTeam(Sheet sheet) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/postTeamSheet.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(sheet),
+  );
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('pas de données');
+  }
+}
+
+class ListEventMember extends StatefulWidget {
   final Event event;
   final bool is_admin;
-
   ListEventMember({@required this.event,this.is_admin});
 
   @override
+  _ListEventMemberState createState() => _ListEventMemberState();
+}
+
+class _ListEventMemberState extends State<ListEventMember> {
+  final _TeamAFormKey = GlobalKey<FormState>();
+  final _TeamBFormKey = GlobalKey<FormState>();
+
+  Sheet sheet;
+
+  TextEditingController AdverseTeamAController;
+  TextEditingController ScoreTeamA;
+
+  TextEditingController AdverseTeamBController;
+  TextEditingController ScoreTeamB;
+
+
+  @override
+  void initState() {
+    super.initState();
+    sheet= Sheet(id_event: widget.event.id);
+    if(widget.is_admin){
+      GETTeamA(sheet).then((value) => {
+        AdverseTeamAController = TextEditingController(text: value.adverse_team),
+        ScoreTeamA =TextEditingController(text: value.score),
+      }).catchError((onError)=>{
+        print(onError),
+        AdverseTeamAController = TextEditingController(),
+        ScoreTeamA =TextEditingController(),
+      });
+      GETTeamB(sheet).then((value) => {
+        AdverseTeamBController =TextEditingController(text: value.adverse_team),
+        ScoreTeamB =TextEditingController(text: value.score),
+      }).catchError((onError)=>{
+        AdverseTeamBController =TextEditingController(),
+        ScoreTeamB =TextEditingController(),
+      });
+
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
+    final Member user = widget.event.members.firstWhere((member) => member.id == StateContainer.of(context).user.id);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("${event.name}"),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed:() => Navigator.of(context).pop(),
+          appBar: AppBar(
+            title: Text("${widget.event.name}"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed:() => Navigator.of(context).pop(),
+            ),
+            bottom: TabBar(
+              tabs: <Widget>[
+                Tab(
+                  icon: Icon(Icons.supervisor_account),
+                  text: "participe",
+                ),
+                Tab(
+                  icon: Icon(Icons.supervisor_account),
+                  text: "ne participe pas",
+                ),
+                Tab(
+                  icon: Icon(Icons.supervisor_account),
+                  text: "peut être",
+                ),
+              ],
+            ),
           ),
-          bottom: TabBar(
-            tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.supervisor_account),
-                text: "participe",
-              ),
-              Tab(
-                icon: Icon(Icons.supervisor_account),
-                text: "ne participe pas",
-              ),
-              Tab(
-                icon: Icon(Icons.supervisor_account),
-                text: "peut être",
-              ),
-            ],
+          body: Stack(
+              children:<Widget>[
+                SizedBox.expand(
+                  child:TabBarView(
+                    children: <Widget>[
+                      ParticipeScreen(event:widget.event,is_admin:widget.is_admin),
+                      ParticipePasScreen(event:widget.event),
+                      PeutEtreScreen(event:widget.event),
+                    ],
+                  ),
+                ),
+                if(widget.is_admin)
+                  _buildDraggableScrollableSheetAB()
+                else if(user?.is_teamA)
+                  _buildDraggableScrollableSheetA()
+                else if(user?.is_teamB)
+                    _buildDraggableScrollableSheetB()
+              ]
+          )
+      ),
+    );
+  }
+  DraggableScrollableSheet _buildDraggableScrollableSheetA(){
+    return DraggableScrollableSheet(
+      initialChildSize: 0.1,
+      minChildSize: 0.1,
+      maxChildSize: 0.9,
+      builder: (BuildContext context,ScrollController scrollController){
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8)
+              )
           ),
+            child: ListView.builder(
+              controller: scrollController,
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index){
+                return Column(
+                  children: <Widget>[
+                    Text('Mon Equipe'),
+                    ListTile(
+                      title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team}'),
+                    ),
+                    ListTile(
+                      title: Text('Score : ${widget.event.sheetA.score}'),
+                    )
+                  ],
+                );
+              },
+            ),
+        );
+      },
+    );
+  }
+  DraggableScrollableSheet _buildDraggableScrollableSheetB(){
+    return DraggableScrollableSheet(
+      initialChildSize: 0.1,
+      minChildSize: 0.1,
+      maxChildSize: 0.9,
+      builder: (BuildContext context,ScrollController scrollController){
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8)
+              )
+          ),
+          child: Scrollbar(
+            child: ListView.builder(
+              controller: scrollController,
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index){
+                return Column(
+                  children: <Widget>[
+                    Text('Mon Equipe'),
+                    ListTile(
+                      title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team}'),
+                    ),
+                    ListTile(
+                      title: Text('Score : ${widget.event.sheetB.score}'),
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+  DraggableScrollableSheet _buildDraggableScrollableSheetAB(){
+    return DraggableScrollableSheet(
+      initialChildSize: 0.1,
+      minChildSize: 0.1,
+      maxChildSize: 0.9,
+      builder: (BuildContext context,ScrollController scrollController){
+        return Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                stops: [0.1, 0.5, 0.7, 0.9],
+                colors: [
+                  Colors.indigo[600],
+                  Colors.indigo[400],
+                  Colors.red[300],
+                  Colors.red[200],
+                ],
+              )
+          ),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index){
+              return Column(
+                children: <Widget>[
+                Form(
+                key: _TeamAFormKey,
+                child: Column(
+                  children: <Widget>[
+                    Text("Equipe A"),
+                    _buildRegisterAdverseTeamA(),
+                    _buildRegisterScoreTeamA(),
+                    _buildRegisterBtnA()
+                  ],
+                ),
+              ),
+                  Form(
+                    key: _TeamBFormKey,
+                    child: Column(
+                      children: <Widget>[
+                        Text("Equipe B"),
+                        _buildRegisterAdverseTeamB(),
+                        _buildRegisterScoreTeamB(),
+                        _buildRegisterBtnB()
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+  Widget _buildRegisterAdverseTeamA(){
+    return TextFormField(
+      controller: AdverseTeamAController,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+          filled: true,
+          border: UnderlineInputBorder(),
+          labelText: 'Equipe adverse',
+          labelStyle: TextStyle(
+              color: Colors.black87
+          ),
+          prefixIcon: Icon(
+            Icons.flag,
+            color: Colors.black87,
+          )
+      ),
+      style: TextStyle(
+          color: Colors.black87,
+          fontFamily: 'OpenSans'
+      ),
+      obscureText: false,
+      autofocus: false,
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Ce champ ne peut pas être vide';
+        }
+        return null;
+      },
+    );
+  }
+  Widget _buildRegisterScoreTeamA(){
+    return TextFormField(
+      controller: ScoreTeamA,
+      decoration: InputDecoration(
+          filled: true,
+          border: UnderlineInputBorder(),
+          labelText: 'score',
+          labelStyle: TextStyle(
+              color: Colors.black87
+          ),
+          prefixIcon: Icon(
+            Icons.score,
+            color: Colors.black87,
+          )
+      ),
+      keyboardType: TextInputType.datetime,
+      style: TextStyle(
+          color: Colors.black87,
+          fontFamily: 'OpenSans'
+      ),
+      obscureText: false,
+      autofocus: false,
+      validator: (value) {
+      },
+    );
+  }
+  Widget _buildRegisterBtnA(){
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: (){
+          if(_TeamAFormKey.currentState.validate()){
+            ValidationFormA();
+          }
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
         ),
-        body: TabBarView(
-          children: <Widget>[
-            ParticipeScreen(event:event,is_admin:is_admin),
-            ParticipePasScreen(event:event),
-            PeutEtreScreen(event:event),
-          ],
+        color: Colors.white,
+        child: Text(
+          'METTRE A JOUR EQUIPE A',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
         ),
       ),
-    );;
+    );
+  }
+
+
+  ValidationFormA(){
+    final Sheet sheet= Sheet(
+      id_event: widget.event.id,
+      adverse_team: AdverseTeamAController.text,
+      score: ScoreTeamA.text,
+      nb_sheet: "A"
+    );
+    POSTTeam(sheet).then((value) => {
+    }).catchError((onError)=>{
+      print(onError)
+    });
+
+  }
+
+  ValidationFormB(){
+    final Sheet sheet= Sheet(
+        id_event: widget.event.id,
+        adverse_team: AdverseTeamBController.text,
+        score: ScoreTeamB.text,
+        nb_sheet: "B"
+    );
+    POSTTeam(sheet).then((value) => {
+    }).catchError((onError)=>{
+      print(onError)
+    });
+
+  }
+
+  Widget _buildRegisterAdverseTeamB(){
+    return TextFormField(
+      controller:AdverseTeamBController ,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+          filled: true,
+          border: UnderlineInputBorder(),
+          labelText: 'Equipe adverse',
+          labelStyle: TextStyle(
+              color: Colors.black87
+          ),
+          prefixIcon: Icon(
+            Icons.flag,
+            color: Colors.black87,
+          )
+      ),
+      style: TextStyle(
+          color: Colors.black87,
+          fontFamily: 'OpenSans'
+      ),
+      obscureText: false,
+      autofocus: false,
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Ce champ ne peut pas être vide';
+        }
+        return null;
+      },
+    );
+  }
+  Widget _buildRegisterScoreTeamB(){
+    return TextFormField(
+      controller: ScoreTeamB,
+      decoration: InputDecoration(
+          filled: true,
+          border: UnderlineInputBorder(),
+          labelText: 'score',
+          labelStyle: TextStyle(
+              color: Colors.black87
+          ),
+          prefixIcon: Icon(
+            Icons.score,
+            color: Colors.black87,
+          )
+      ),
+      keyboardType: TextInputType.datetime,
+      style: TextStyle(
+          color: Colors.black87,
+          fontFamily: 'OpenSans'
+      ),
+      obscureText: false,
+      autofocus: false,
+      validator: (value) {
+      },
+    );
+  }
+  Widget _buildRegisterBtnB(){
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: (){
+          if(_TeamBFormKey.currentState.validate()){
+            ValidationFormB();
+          }
+        },
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'METTRE A JOUR EQUIPE B',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
   }
 }
+

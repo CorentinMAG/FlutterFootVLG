@@ -1,3 +1,5 @@
+import 'package:ffootvlg/models/sheet.dart';
+
 import 'Member.dart';
 
 class Event{
@@ -13,6 +15,8 @@ class Event{
   String endroit;
   String datetime;
   List<Member> members;
+  Sheet sheetA;
+  Sheet sheetB;
 
   Event({this.id=0,
     this.id_group=0,
@@ -25,7 +29,10 @@ class Event{
     this.vote="",
     this.datetime="",
     this.endroit="",
-    this.members});
+    this.members,
+    this.sheetA,
+    this.sheetB
+  });
 
   Event.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -45,6 +52,8 @@ class Event{
         members.add(new Member.fromJson(v));
       });
     }
+    sheetA=Sheet.fromJson(json['sheetA']);
+    sheetB=Sheet.fromJson(json['sheetB']);
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -59,6 +68,8 @@ class Event{
     data['datetime']=this.datetime;
     data['endroit']=this.endroit;
     data['vote']=this.vote;
+    data['sheetA']=this.sheetA;
+    data['sheetB']=this.sheetB;
     if (this.members != null) {
       data['members'] = this.members.map((v) => v.toJson()).toList();
     }

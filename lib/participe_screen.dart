@@ -69,6 +69,7 @@ class _tile extends StatefulWidget {
   final Member member;
   final Event event;
   final bool is_admin;
+
   _tile({this.member,this.event,this.is_admin});
   @override
   __tileState createState() => __tileState();
