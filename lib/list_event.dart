@@ -8,6 +8,7 @@ import 'package:ffootvlg/participe_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 Future<Sheet> GETTeamA(Sheet sheet) async {
   final http.Response response = await http.post(
@@ -66,6 +67,7 @@ class ListEventMember extends StatefulWidget {
 class _ListEventMemberState extends State<ListEventMember> {
   final _TeamAFormKey = GlobalKey<FormState>();
   final _TeamBFormKey = GlobalKey<FormState>();
+  double rating=0;
 
   Sheet sheet;
 
@@ -153,6 +155,7 @@ class _ListEventMemberState extends State<ListEventMember> {
     );
   }
   DraggableScrollableSheet _buildDraggableScrollableSheetA(){
+    var teamA_members = widget.event.members.where((element) => element.is_teamA==true).toList();
     return DraggableScrollableSheet(
       initialChildSize: 0.1,
       minChildSize: 0.1,
@@ -166,33 +169,67 @@ class _ListEventMemberState extends State<ListEventMember> {
                   topRight: Radius.circular(8)
               )
           ),
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index){
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 43.0),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 14.0,),
-                      Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
-                      SizedBox(height: 24.0,),
-                      ListTile(
-                        title: Text('Equipe Adverse : ${widget.event.sheetA.adverse_team ?? "Pas de données..."}',style: TextStyle(color: Colors.white,fontSize: 20.0),),
-                      ),
-                      ListTile(
-                        title: Text('Score : ${widget.event.sheetA.score ?? "Pas de données..."}',style:TextStyle(color: Colors.white,fontSize: 20.0)),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index){
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 43.0),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 14.0,),
+                    Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
+                    SizedBox(height: 50.0,),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Equipe A ',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text('${widget.event.sheetB.score.replaceFirst("-"," - ") ?? "0 - 0" }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text("${widget.event.sheetB.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
+                      ],
+                    ),
+                    Container(
+                        width: 800,
+                        height: 400,
+                        child:ListView.builder(
+                            controller: scrollController,
+                            itemCount: teamA_members.length,
+                            itemBuilder: (BuildContext context, int index){
+                              return ListTile(
+                                title: Text('${teamA_members[index].last_name.toUpperCase()} ${teamA_members[index].first_name}',style: TextStyle(color: Colors.white),),
+                                trailing: SmoothStarRating(
+                                  isReadOnly: false,
+                                  size: 30,
+                                  filledIconData: Icons.star,
+                                  halfFilledIconData: Icons.star_half,
+                                  defaultIconData: Icons.star_border,
+                                  starCount: 5,
+                                  allowHalfRating: true,
+                                  color: Colors.red,
+                                  borderColor: Colors.red,
+                                  spacing: 2.0,
+                                  onRated: (value) {
+                                    //TODO : connecter à la base de données et récupérer les stats des joueurs
+                                    print("rating value -> $value");
+                                  },
+                                ),
+                              );
+                            }
+                        )
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
   DraggableScrollableSheet _buildDraggableScrollableSheetB(){
+    var teamB_members = widget.event.members.where((element) => element.is_teamB==true).toList();
     return DraggableScrollableSheet(
       initialChildSize: 0.1,
       minChildSize: 0.1,
@@ -216,12 +253,43 @@ class _ListEventMemberState extends State<ListEventMember> {
                   children: <Widget>[
                     SizedBox(height: 14.0,),
                     Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
-                    SizedBox(height: 24.0,),
-                    ListTile(
-                      title: Text('Equipe Adverse : ${widget.event.sheetB.adverse_team ?? "Pas de données..."}',style: TextStyle(color: Colors.white,fontSize: 20.0),),
+                    SizedBox(height: 50.0,),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Equipe B ',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text('${widget.event.sheetB.score.replaceFirst("-"," - ") ?? "0 - 0" }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text("${widget.event.sheetB.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
+                      ],
                     ),
-                    ListTile(
-                      title: Text('Score : ${widget.event.sheetB.score ?? "Pas de données..."}',style:TextStyle(color: Colors.white,fontSize: 20.0)),
+                    Container(
+                      width: 800,
+                      height: 400,
+                      child:ListView.builder(
+                        controller: scrollController,
+                        itemCount: teamB_members.length,
+                        itemBuilder: (BuildContext context, int index){
+                          return ListTile(
+                            title: Text('${teamB_members[index].last_name.toUpperCase()} ${teamB_members[index].first_name}',style: TextStyle(color: Colors.white),),
+                            trailing: SmoothStarRating(
+                              isReadOnly: false,
+                              size: 30,
+                              filledIconData: Icons.star,
+                              halfFilledIconData: Icons.star_half,
+                              defaultIconData: Icons.star_border,
+                              starCount: 5,
+                              allowHalfRating: true,
+                              spacing: 2.0,
+                              onRated: (value) {
+                                //TODO : connecter à la base de données et récupérer les stats des joueurs
+                                print("rating value -> $value");
+                              },
+                            ),
+                          );
+                        }
+                      )
                     )
                   ],
                 ),
@@ -358,6 +426,12 @@ class _ListEventMemberState extends State<ListEventMember> {
       obscureText: false,
       autofocus: false,
       validator: (value) {
+        RegExp regex = RegExp(r"^[0-9]{1,}-[0-9]{1,}$");
+        if(regex.hasMatch(value)){
+          return null;
+        }else{
+          return "le format doit être 5-3";
+        }
       },
     );
   }
@@ -410,7 +484,7 @@ class _ListEventMemberState extends State<ListEventMember> {
     final Sheet sheet= Sheet(
         id_event: widget.event.id,
         adverse_team: AdverseTeamBController.text,
-        score: ScoreTeamB.text,
+        score: ScoreTeamB.text=="" ? null : ScoreTeamB.text,
         nb_sheet: "B"
     );
     POSTTeam(sheet).then((value) => {
@@ -474,6 +548,12 @@ class _ListEventMemberState extends State<ListEventMember> {
       obscureText: false,
       autofocus: false,
       validator: (value) {
+        RegExp regex = RegExp(r"^[0-9]{1,}-[0-9]{1,}$");
+        if(regex.hasMatch(value)){
+          return null;
+        }else{
+          return "le format doit être 5-3";
+        }
       },
     );
   }

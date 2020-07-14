@@ -8,8 +8,8 @@ class Sheet{
   Sheet({
     this.id_team=0,
     this.id_event=0,
-    this.adverse_team="",
-    this.score="",
+    this.adverse_team,
+    this.score,
     this.nb_sheet=""
 });
 
