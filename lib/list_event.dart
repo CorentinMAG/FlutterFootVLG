@@ -186,8 +186,8 @@ class _ListEventMemberState extends State<ListEventMember> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text('Equipe A ',style: TextStyle(color: Colors.white,fontSize: 24.0),),
-                        Text('${widget.event.sheetB.score.replaceFirst("-"," - ") ?? "0 - 0" }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
-                        Text("${widget.event.sheetB.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
+                        Text('${widget.event.sheetA.score.replaceFirst("-"," - ") ?? "0 - 0" }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text("${widget.event.sheetA.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
                       ],
                     ),
                     Container(
