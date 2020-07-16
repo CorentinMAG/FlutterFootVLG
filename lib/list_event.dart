@@ -174,8 +174,11 @@ class _ListEventMemberState extends State<ListEventMember> {
             itemCount: 1,
             itemBuilder: (BuildContext context, int index){
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 43.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: 14.0,),
                     Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
@@ -190,35 +193,35 @@ class _ListEventMemberState extends State<ListEventMember> {
                         Text("${widget.event.sheetA.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
                       ],
                     ),
-                    Container(
-                        width: 800,
-                        height: 400,
-                        child:ListView.builder(
-                            controller: scrollController,
-                            itemCount: teamA_members.length,
-                            itemBuilder: (BuildContext context, int index){
-                              return ListTile(
-                                title: Text('${teamA_members[index].last_name.toUpperCase()} ${teamA_members[index].first_name}',style: TextStyle(color: Colors.white),),
-                                trailing: SmoothStarRating(
-                                  isReadOnly: false,
-                                  size: 30,
-                                  filledIconData: Icons.star,
-                                  halfFilledIconData: Icons.star_half,
-                                  defaultIconData: Icons.star_border,
-                                  starCount: 5,
-                                  allowHalfRating: true,
-                                  color: Colors.red,
-                                  borderColor: Colors.red,
-                                  spacing: 2.0,
-                                  onRated: (value) {
-                                    //TODO : connecter à la base de données et récupérer les stats des joueurs
-                                    print("rating value -> $value");
-                                  },
-                                ),
-                              );
-                            }
-                        )
-                    )
+                    SizedBox(height: 54.0,),
+                  Container(
+                    width: 800,
+                    height: 300,
+                    child: ListView.builder(
+                        controller: scrollController,
+                        itemCount: teamA_members.length,
+                        itemBuilder: (BuildContext context, int index){
+                          return ListTile(
+                            title: Text('${teamA_members[index].last_name.toUpperCase()} ${teamA_members[index].first_name}',style: TextStyle(color: Colors.white),),
+                            trailing: SmoothStarRating(
+                              isReadOnly: false,
+                              size: 30,
+                              filledIconData: Icons.star,
+                              defaultIconData: Icons.star_border,
+                              starCount: 5,
+                              allowHalfRating: false,
+                              color: Colors.red,
+                              borderColor: Colors.red,
+                              spacing: 2.0,
+                              onRated: (value) {
+                                //TODO : connecter à la base de données et récupérer les stats des joueurs
+                                print("rating value -> $value");
+                              },
+                            ),
+                          );
+                        }
+                    ),
+                  )
                   ],
                 ),
               );
@@ -277,10 +280,9 @@ class _ListEventMemberState extends State<ListEventMember> {
                               isReadOnly: false,
                               size: 30,
                               filledIconData: Icons.star,
-                              halfFilledIconData: Icons.star_half,
                               defaultIconData: Icons.star_border,
                               starCount: 5,
-                              allowHalfRating: true,
+                              allowHalfRating: false,
                               spacing: 2.0,
                               onRated: (value) {
                                 //TODO : connecter à la base de données et récupérer les stats des joueurs
