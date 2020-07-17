@@ -107,7 +107,7 @@ class _RegisterFormState extends State<RegisterForm> {
           )
       ),
       style: TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontFamily: 'OpenSans'
       ),
       obscureText: false,
@@ -188,6 +188,7 @@ class _RegisterFormState extends State<RegisterForm> {
       decoration: InputDecoration(
         filled: true,
         counterText: "",
+          hintText: "1997-10-10",
           border: UnderlineInputBorder(),
           labelText: 'Date de naissance (AAAA-mm-jj)',
           labelStyle: TextStyle(
@@ -362,7 +363,7 @@ class _RegisterFormState extends State<RegisterForm> {
     final container = StateContainer.of(context);
     CreateUser(user).then((user) =>{
       container.updateUserInfo(Member: user),
-      Navigator.pushReplacementNamed(context, '/home')
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false)
     })
         .catchError((onError) => {
       Scaffold.of(context)

@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:ffootvlg/models/rate.dart';
 import 'package:flutter/cupertino.dart';
 
 class Member{
@@ -12,12 +13,17 @@ class Member{
   String password;
   final String inscription_date;
   bool is_admin;
+  double rating;
+  int nb_vote;
+  int nb_matchs;
+  bool has_voted;
   bool is_superuser;
   String status;
   bool is_group_admin;
   bool is_event_admin;
   bool is_teamA;
   bool is_teamB;
+  List<Rate> rates;
 
   Member({
     this.id=0,
@@ -31,10 +37,15 @@ class Member{
     this.is_admin=false,
     this.is_superuser=false,
     this.status="",
+    this.rating=0,
+    this.nb_vote=0,
+    this.nb_matchs=0,
+    this.has_voted=false,
     this.is_teamA=false,
     this.is_teamB=false,
     this.is_group_admin=false,
-    this.is_event_admin=false
+    this.is_event_admin=false,
+    this.rates
   }
   );
 
@@ -54,7 +65,11 @@ class Member{
         "is_group_admin":is_group_admin,
         "is_event_admin":is_event_admin,
         "is_teamA":is_teamA,
-        "is_teamB":is_teamB
+        "is_teamB":is_teamB,
+        "has_voted":has_voted,
+        "rating":rating,
+        "nb_vote":nb_vote,
+        "nb_matchs":nb_matchs,
       };
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -72,10 +87,21 @@ class Member{
       is_group_admin:json['is_group_admin'],
       is_event_admin: json['is_event_admin'],
       is_teamA: json['is_teamA'],
-      is_teamB: json['is_teamB']
+      is_teamB: json['is_teamB'],
+      has_voted: json['has_voted'],
+      rating : json['rating'] == null ? 0 : double.parse(json['rating'].toString()),
+      nb_vote : json['nb_vote'],
+      nb_matchs: json['nb_matchs']
     );
     if(json['status']!=null){
       user.status = json['status'];
+    }
+    if (json['rates'] != null) {
+      var rates = new List<Rate>();
+      json['rates'].forEach((v) {
+        rates.add(new Rate.fromJson(v));
+      });
+      user.rates = rates;
     }
     return user;
   }

@@ -58,6 +58,69 @@ class ProfilPage extends StatelessWidget {
                 ),
               )
           ),
+          Card(
+            margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 5.0),
+            clipBehavior: Clip.antiAlias,
+            color: Colors.white,
+            elevation: 5.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 22.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+
+                      children: <Widget>[
+                        Text(
+                          "Matchs",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          "${user.nb_matchs}",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+
+                      children: <Widget>[
+                        Text(
+                          "Note",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          "${user.rating.toStringAsFixed(2)}",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Container(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0,horizontal: 16.0),

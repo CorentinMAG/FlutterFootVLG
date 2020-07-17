@@ -3,12 +3,14 @@ import 'dart:ui';
 
 import 'package:ffootvlg/models/Event.dart';
 import 'package:ffootvlg/models/Member.dart';
+import 'package:ffootvlg/models/rate.dart';
 import 'package:ffootvlg/models/sheet.dart';
 import 'package:ffootvlg/participe_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+
 
 Future<Sheet> GETTeamA(Sheet sheet) async {
   final http.Response response = await http.post(
@@ -20,6 +22,36 @@ Future<Sheet> GETTeamA(Sheet sheet) async {
   );
   if (response.statusCode == 200) {
     return Sheet.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('pas de données');
+  }
+}
+Future<Null> RatePlayer(Rate rate) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/rate.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(rate),
+  );
+  if (response.statusCode == 200) {
+  } else {
+    throw Exception('pas de données');
+  }
+}
+
+Future<String> BestPlayer(int id) async {
+  final http.Response response = await http.post(
+    'https://foot.agenda-crna-n.com/bestPlayer.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, int>{
+      'id': id,
+    },),
+  );
+  if (response.statusCode == 200) {
+    return response.body;
   } else {
     throw Exception('pas de données');
   }
@@ -67,6 +99,7 @@ class ListEventMember extends StatefulWidget {
 class _ListEventMemberState extends State<ListEventMember> {
   final _TeamAFormKey = GlobalKey<FormState>();
   final _TeamBFormKey = GlobalKey<FormState>();
+  String bestPlayer="";
   double rating=0;
 
   Sheet sheet;
@@ -80,6 +113,9 @@ class _ListEventMemberState extends State<ListEventMember> {
 
   @override
   void initState() {
+    BestPlayer(widget.event.id).then((value) => {
+      bestPlayer = value,
+    });
     super.initState();
     sheet= Sheet(id_event: widget.event.id);
     if(widget.is_admin){
@@ -156,6 +192,7 @@ class _ListEventMemberState extends State<ListEventMember> {
   }
   DraggableScrollableSheet _buildDraggableScrollableSheetA(){
     var teamA_members = widget.event.members.where((element) => element.is_teamA==true).toList();
+    var me = widget.event.members.firstWhere((element) => element.id == StateContainer.of(context).user.id);
     return DraggableScrollableSheet(
       initialChildSize: 0.1,
       minChildSize: 0.1,
@@ -182,14 +219,17 @@ class _ListEventMemberState extends State<ListEventMember> {
                   children: <Widget>[
                     SizedBox(height: 14.0,),
                     Text('Mon Equipe',style: TextStyle(color: Colors.white,fontSize: 34.0),),
-                    SizedBox(height: 50.0,),
+                    SizedBox(height: 30.0,),
+                    if(bestPlayer!="")
+                    Text(bestPlayer??"",style: TextStyle(color: Colors.white,fontSize: 20.0),),
+                    SizedBox(height: 30.0,),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text('Equipe A ',style: TextStyle(color: Colors.white,fontSize: 24.0),),
-                        Text('${widget.event.sheetA.score.replaceFirst("-"," - ") ?? "0 - 0" }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
+                        Text('${widget.event.sheetA.score==null ? "0 - 0 " : widget.event.sheetA.score.replaceFirst("-"," - ") ?? "0 - 0"  }',style: TextStyle(color: Colors.white,fontSize: 24.0),),
                         Text("${widget.event.sheetA.adverse_team ?? "Pas de données..."}",style: TextStyle(color: Colors.white,fontSize: 24.0),)
                       ],
                     ),
@@ -206,6 +246,7 @@ class _ListEventMemberState extends State<ListEventMember> {
                             trailing: SmoothStarRating(
                               isReadOnly: false,
                               size: 30,
+                              rating: me.rates.firstWhere((element) => element.id_player ==teamA_members[index].id,orElse:()=>Rate(id_event: 0,id_member: 0,id_player: 0,rate:0)).rate.toDouble(),
                               filledIconData: Icons.star,
                               defaultIconData: Icons.star_border,
                               starCount: 5,
@@ -215,7 +256,14 @@ class _ListEventMemberState extends State<ListEventMember> {
                               spacing: 2.0,
                               onRated: (value) {
                                 //TODO : connecter à la base de données et récupérer les stats des joueurs
-                                print("rating value -> $value");
+                                final rate = Rate(
+                                  id_rate: 0,
+                                  id_event: widget.event.id,
+                                  id_member: StateContainer.of(context).user.id,
+                                  id_player: teamA_members[index].id,
+                                  rate: value.toInt()
+                                );
+                                RatePlayer(rate);
                               },
                             ),
                           );
