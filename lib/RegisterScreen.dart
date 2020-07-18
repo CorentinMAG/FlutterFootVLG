@@ -17,7 +17,7 @@ Future<Member> CreateUser(Member user) async {
   if (response.statusCode == 200) {
     return Member.fromJson(json.decode(response.body));
   } else {
-    throw Exception('Impossible de créer l\'utilisateur');
+    throw Exception('l\'email et/ou le numéro de téléphone déjà dans la base');
   }
 }
 
