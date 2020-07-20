@@ -19,7 +19,8 @@ cache:
         - mkdir Payload 
         - cd Payload 
         - ln -s ../Runner.app 
-        - cd .. - zip -r app.ipa Payload 
+        - cd .. 
+        - zip -r app.ipa Payload 
         - popd
 deploy:
   provider: releases
