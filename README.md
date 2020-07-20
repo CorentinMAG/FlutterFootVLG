@@ -1,7 +1,6 @@
 # ffootvlg
 
 [![Codemagic build status](https://api.codemagic.io/apps/5f0323bc98b7990018d02649/5f0323bc98b7990018d02648/status_badge.svg)](https://codemagic.io/apps/5f0323bc98b7990018d02649/5f0323bc98b7990018d02648/latest_build)
-[![Build Status](https://travis-ci.com/CorentinMAG/FlutterFootVLG.svg?branch=master)](https://travis-ci.com/CorentinMAG/FlutterFootVLG)
 
 A new Flutter application.
 
